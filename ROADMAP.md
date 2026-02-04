@@ -1,6 +1,11 @@
-# roadmap 
-
-- fix caret length to cover full screen 
-- add global class for button for hover:pointer-cursor across project
-- allow for scrolling through track headers (at the moment can only be scrolled by scrolling the track bodies)
-- 
+# roadmap (TODO)
+- Add L and R markers to the dials in the mixing deck (same styling used in the tracks)
+- Add more colours for the tracks 
+- Add drag to resize notes in the midi editor 
+- add looping functionality
+- resize regions (auto resize based on largest note in the track)
+- add limiters to the dial spinning (change max and min angles)
+- change from infinite mixing deck to only reflect the number of tracks 
+- fix volume slider styling in chrome and safari (not firefox)
+- make dials and sliders (and mute / solo button states) in the mixing deck match the ones in the tracks. 
+- fix to be able to remove bars from a track down to zero instead of being stopped at 1 track left. 
