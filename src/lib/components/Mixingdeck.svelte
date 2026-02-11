@@ -34,8 +34,14 @@
   
   <!-- iteratively display Channels (each channel containing a mixchannel component and dial stacked on top) -->
   {#each channels as val, i (i)}
-    <div class="">
-      <Dial bind:value={channels[i]} />
+    <div class="space-y-2">
+      <div class="pl-1.5">
+        <div class="flex items-end text-neutral-300 text-xs">
+          <div>L</div>
+          <Dial bind:value={channels[i]} />
+          <div>R</div>
+        </div>
+      </div>
       <MixChannel bind:value={channels[i]} />
     </div>
   {/each}
