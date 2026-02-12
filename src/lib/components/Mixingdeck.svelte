@@ -30,7 +30,7 @@
   });
 </script>
 
-<div class="bottom-0 w-full h-[30vh] bg-[#5C5B5B] flex justify-center items-center gap-5 border-t-1 border-neutral-400">
+<div class="bottom-0 w-full h-[30vh] bg-[#5C5B5B] flex justify-center items-center gap-5 border-t-1 border-neutral-400 z-30">
   
   <!-- iteratively display Channels (each channel containing a mixchannel component and dial stacked on top) -->
   {#each channels as val, i (i)}
