@@ -51,7 +51,7 @@
 
     <!-- loops through tracks --> 
     <div class="relative overflow-auto bg-neutral-900 overscroll-none" bind:this={tracksEl}>
-        <div class="h-full absolute w-[1px] bg-white" style="left: {$caretPos}px"></div>
+        <div class="h-full fixed w-[1px] bg-white z-30" style="left: {$caretPos + 256}px"></div>
 
         <!-- pass props to track body to identify it uniquely -->
         <EditorTrack />
