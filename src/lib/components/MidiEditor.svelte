@@ -31,9 +31,9 @@
 </script>
 
 
-<div class="grid grid-cols-[20%_1fr] grid-rows-[auto_1fr] flex-1 text-white overflow-auto">
+<div class="grid grid-cols-[20%_1fr] grid-rows-[auto_1fr] flex-1 text-white overflow-hidden">
 
-    <div class="sticky top-0 left-0 z-2 bg-neutral-500">  <!--sticks to the top and left to avoid any scroll interference-->
+    <div class="sticky top-0 left-0 z-2 bg-neutral-500 ">  <!--sticks to the top and left to avoid any scroll interference-->
         <button class="font-bold bg-neutral-700 hover:cursor-pointer flex" on:click={closeMidiEditor}>
             <img src={plus} alt="close" class="rotate-45">
         </button>
@@ -44,14 +44,13 @@
     </div>
 
     <!-- piano -->
-    <div class="sticky left-0 bg-neutral-800 overflow-hidden" bind:this={keysEl}>
+    <div class="sticky left-0 z-10 bg-neutral-800 overflow-hidden" bind:this={keysEl}>
         <EditorKeys />
     </div>
 
 
     <!-- loops through tracks --> 
     <div class="relative overflow-auto bg-neutral-900 overscroll-none" bind:this={tracksEl}>
-
         <div class="h-full absolute w-[1px] bg-white" style="left: {$caretPos}px"></div>
 
         <!-- pass props to track body to identify it uniquely -->

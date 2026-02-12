@@ -63,30 +63,32 @@
     }
 </script>
 
-<!-- 8 octaves -->
-{#each Array.from({ length: 8 }) as _, octaveIndex}
+<div class="overflow-auto">
+  <!-- 8 octaves -->
+  {#each Array.from({ length: 8 }) as _, octaveIndex}
 
-  {#each Array.from({ length: 12 }) as _, rowIndex}
-    <div class="bg-neutral-900 h-6 flex">
-      {#each Array.from({ length: $noOfBars }) as _, barIndex}
-      
+    {#each Array.from({ length: 12 }) as _, rowIndex}
+      <div class="bg-neutral-900 h-6 flex">
+        {#each Array.from({ length: $noOfBars }) as _, barIndex}
+        
 
-        <div class="border-neutral-800 border-1 w-1/4 h-6">
-          <!-- svelte-ignore a11y_consider_explicit_label -->
-          <!-- svelte-ignore element_invalid_self_closing_tag -->
-          <button
-            class="w-full h-full"
-            class:bg-green-500={hasNoteHelper(octaveIndex, barIndex, rowIndex)}
-            class:bg-neutral-900={!hasNoteHelper(octaveIndex, barIndex, rowIndex)}
-            on:click={() =>
-              handleNote(octaveIndex, rowIndex, barIndex)
-            }
-          />
-        </div>
-      {/each}
-    </div>
+          <div class="border-neutral-800 border-1 w-1/4 h-6">
+            <!-- svelte-ignore a11y_consider_explicit_label -->
+            <!-- svelte-ignore element_invalid_self_closing_tag -->
+            <button
+              class="w-full h-full"
+              class:bg-green-500={hasNoteHelper(octaveIndex, barIndex, rowIndex)}
+              class:bg-neutral-900={!hasNoteHelper(octaveIndex, barIndex, rowIndex)}
+              on:click={() =>
+                handleNote(octaveIndex, rowIndex, barIndex)
+              }
+            />
+          </div>
+        {/each}
+      </div>
+    {/each}
   {/each}
-{/each}
+</div>
 
 
 
