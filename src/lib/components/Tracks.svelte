@@ -10,8 +10,16 @@
   let trackbarsEl: HTMLDivElement;
   let bodyEl: HTMLDivElement;
 
+    let caretHeight = 0
+
+    function updateCaretHeight() {
+        caretHeight = bodyEl.scrollHeight
+    }
+
   onMount(() => {
+    updateCaretHeight()
     bodyEl.addEventListener("scroll", () => {
+      
       // sync header and body vertical scrolling
       headerEl.scrollTop = bodyEl.scrollTop;
 
@@ -45,7 +53,7 @@
 
   <!-- Main body -->
   <div class="relative overflow-auto bg-neutral-900 overscroll-none" bind:this={bodyEl}>
-    <div class="h-full fixed w-[1px] bg-white" style="left: {$caretPos + 384}px"></div>
+    <div class="h-full absolute top-0 bottom-0 w-[1px] bg-white" style="left: {$caretPos}px; height: {caretHeight}px;"></div>
 
     <!-- pass props to track body to identify it uniquely -->
     {#each $TracksArray as track, i (track.id)}
