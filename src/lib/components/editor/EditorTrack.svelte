@@ -63,7 +63,7 @@
     }
 </script>
 
-<div class="overflow-auto">
+<div class="">
   <!-- 8 octaves -->
   {#each Array.from({ length: 8 }) as _, octaveIndex}
 
@@ -72,7 +72,7 @@
         {#each Array.from({ length: $noOfBars }) as _, barIndex}
         
 
-          <div class="border-neutral-800 border-1 w-1/4 h-6">
+          <div class="border-neutral-800 border-1 w-1/4 h-6 flex-shrink-0 relative"> <!-- svelte-ignore a11y_consider_explicit_label --> <!-- svelte-ignore element_invalid_self_closing_tag --> <!-- the button is the note that you click to add or remove a note, and the hasNoteHelper function determines whether it should be green (if there is a note there) or not (if there isnt a note there)--> <!-- the math.max bit subtracts 1 but keeps the value from going below 1 --> <!-- the handleNote function adds or removes a note at that position in the store depending on whether there is already a note there or not-->
             <!-- svelte-ignore a11y_consider_explicit_label -->
             <!-- svelte-ignore element_invalid_self_closing_tag -->
             <button
