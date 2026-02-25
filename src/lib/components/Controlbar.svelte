@@ -13,7 +13,7 @@
     import snip from '$lib/assets/snip.png'
     import mixer from '$lib/assets/mixer.png'
 
-    import { currentBar, currentBeat, keySig, timeSig, tonality, accidental, octave, tempo, isPlaying, TracksArray } from '$lib/stores'
+    import { currentBar, currentBeat, keySig, timeSig, tonality, accidental, octave, tempo, isPlaying, TracksArray, isLoopMode } from '$lib/stores'
     import { caretPos } from '$lib/stores'
 
     import { mixingDeckHidden } from "$lib/stores";
@@ -99,7 +99,7 @@
 
     function toggleLoopMode() {
         //toggle to opposite setting
-        isLoopMode.set(!isLoopMode)
+        isLoopMode.set(!$isLoopMode)
     }
 
     //Comment later i dont really get what this does in detail
@@ -140,7 +140,7 @@
                 <img src='{skip}' alt='skip'class="block w-4 h-4 mb-1.5">
                 <span class="cassette-slot"></span>
             </button>
-            <button class="cassette-btn">
+            <button class="cassette-btn" on:click={toggleLoopMode}>
                 <img src={loop} alt='metronome' class="block w-4 h-4 mb-1.5">
                 <span class="cassette-slot"></span>
             </button>

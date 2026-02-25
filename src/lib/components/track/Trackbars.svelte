@@ -1,7 +1,7 @@
 <script lang="ts">
     import minus from '$lib/assets/minus.png'
     import plus from '$lib/assets/plus.png'
-    import { currentBar, noOfBars, caretHeaderWidth, loopedBars } from '$lib/stores';
+    import { currentBar, noOfBars, caretHeaderWidth, loopedBars, isLoopMode } from '$lib/stores';
     import { caretPos } from '$lib/stores';
      import { onMount } from 'svelte';
     $: bars = Array.from({length: $noOfBars}) //$ makes it a reactive variable to allow changes to the array when bars are dynamically added / removed
@@ -54,7 +54,7 @@
     }
 
     function addLoopBar(_barNo) {
-        // if (isLoopMode) {
+        if ($isLoopMode) {
             //if loop mode is on, then allow for highlighting this bar only.
             //when the track starts playing, it will get as far as the highlighted bar, and at the end will replay the same part of the track
 
@@ -65,25 +65,22 @@
                 // Only add the bar if it's not already in the array
                 if (!current.includes(_barNo)) {
                     if (current.length === 0) {
-                    return [...current, _barNo];
-                }
+                        return [...current, _barNo];
+                    }
 
-                // Otherwise, check if the bar is adjacent to any of the existing bars
-                const isAdjacent = sortedBars.some(bar => bar === _barNo - 1 || bar === _barNo + 1);
+                    // Otherwise, check if the bar is adjacent to any of the existing bars
+                    const isAdjacent = sortedBars.some(bar => bar === _barNo - 1 || bar === _barNo + 1);
 
-                if (isAdjacent) {
-                    return [...current, _barNo]; // Add the bar if it's adjacent
-                } else {
-                    return current; // Do not add the bar if it's not adjacent
-                }
-
-                    return [...current, _barNo];
+                    if (isAdjacent) {
+                        return [...current, _barNo]; // Add the bar if it's adjacent
+                    } else {
+                        return current; // Do not add the bar if it's not adjacent
+                    }
                 } else {
                     return current.filter(bar => bar !== _barNo); // Remove the bar if it's already in the array
                 }
-                return current; // No change if it's already in the array
             });
-        // }
+        }
     }
 </script>
 

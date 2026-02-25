@@ -64,9 +64,8 @@ export const currentBar = derived(
 export const currentBeat = writable(1)   //which beat the caret is above / playing
 export const isPlaying = writable(false)   //Tracks whether the tracks are being played or not (and whether the caret should be moving)
 export const whichMidiTrackOpen = writable(0)  //stores which track is open in the midi editor. 0 if none of them open? 
-// export const isLoopMode = writable(false)
-export const loopedBars = writable([]);
-
+export const isLoopMode = writable(false)
+export const loopedBars = writable([])
 
 
 //booleans for toggling extra editors
