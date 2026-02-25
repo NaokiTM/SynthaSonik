@@ -97,6 +97,11 @@
         caretPos.set(0)
     }
 
+    function toggleLoopMode() {
+        //toggle to opposite setting
+        isLoopMode.set(!isLoopMode)
+    }
+
     //Comment later i dont really get what this does in detail
     function nextCaretPos(timestamp) {        
         animationFrame = requestAnimationFrame(nextCaretPos);

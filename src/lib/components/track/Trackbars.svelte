@@ -1,13 +1,16 @@
 <script lang="ts">
     import minus from '$lib/assets/minus.png'
     import plus from '$lib/assets/plus.png'
-    import { currentBar, noOfBars, caretHeaderWidth } from '$lib/stores';
+    import { currentBar, noOfBars, caretHeaderWidth, loopedBars } from '$lib/stores';
     import { caretPos } from '$lib/stores';
-  import { onMount } from 'svelte';
+     import { onMount } from 'svelte';
     $: bars = Array.from({length: $noOfBars}) //$ makes it a reactive variable to allow changes to the array when bars are dynamically added / removed
 
     let holding = false;
     let caretHeader: HTMLElement
+
+    // //change to only apply to current bar 
+    // let toBeLooped = false
 
     //This is required to set a default headerwidth asap to determine what bar we are initially on (in stores.js)
     onMount(() => {
@@ -49,6 +52,20 @@
         window.removeEventListener("mousemove", moveCaret);
         window.removeEventListener("mouseup", stopHolding);
     }
+
+    function loopBar(_barNo) {
+        // if (isLoopMode) {
+            //if loop mode is on, then allow for highlighting this bar only.
+            //when the track starts playing, it will get as far as the highlighted bar, and at the end will replay the same part of the track
+            loopedBars.update(current => {
+                // Only add the bar if it's not already in the array
+                if (!current.includes(_barNo)) {
+                    return [...current, _barNo];
+                }
+                return current; // No change if it's already in the array
+            });
+        // }
+    }
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -66,11 +83,15 @@
 
     <!-- iteratively display bars on top of track body -->
     {#each bars as _, i}
-        <div class="border-neutral-500 border-r-1 h-5 w-1/4 items-center flex p-1 flex-shrink-0 justify-end">
 
-        <!-- print the bar number in each bar section (+1 to avoid zero indexing)-->
-        {i + 1} 
-        </div>
+        <!-- replace with on:click later -->
+        <button 
+        onclick={() => loopBar(i)} 
+        class={`border-neutral-500 border-r-1 h-5 w-1/4 items-center flex p-1 flex-shrink-0 justify-end 
+                ${$loopedBars.includes(i) ? 'bg-amber-400' : 'bg-neutral-700'}`}
+        >
+        {i + 1}
+        </button>
     {/each}
 
     <div class="fixed right-0 bg-gradient-to-r from-transparent to-neutral-900">
