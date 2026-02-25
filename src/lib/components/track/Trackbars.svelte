@@ -57,9 +57,26 @@
         // if (isLoopMode) {
             //if loop mode is on, then allow for highlighting this bar only.
             //when the track starts playing, it will get as far as the highlighted bar, and at the end will replay the same part of the track
+
             loopedBars.update(current => {
+                // Sort the loopedBars array to make sure it's always in order
+                const sortedBars = [...current].sort((a, b) => a - b);
+
                 // Only add the bar if it's not already in the array
                 if (!current.includes(_barNo)) {
+                    if (current.length === 0) {
+                    return [...current, _barNo];
+                }
+
+                // Otherwise, check if the bar is adjacent to any of the existing bars
+                const isAdjacent = sortedBars.some(bar => bar === _barNo - 1 || bar === _barNo + 1);
+
+                if (isAdjacent) {
+                    return [...current, _barNo]; // Add the bar if it's adjacent
+                } else {
+                    return current; // Do not add the bar if it's not adjacent
+                }
+
                     return [...current, _barNo];
                 } else {
                     return current.filter(bar => bar !== _barNo); // Remove the bar if it's already in the array
