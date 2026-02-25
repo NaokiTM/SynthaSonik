@@ -53,7 +53,7 @@
         window.removeEventListener("mouseup", stopHolding);
     }
 
-    function loopBar(_barNo) {
+    function addLoopBar(_barNo) {
         // if (isLoopMode) {
             //if loop mode is on, then allow for highlighting this bar only.
             //when the track starts playing, it will get as far as the highlighted bar, and at the end will replay the same part of the track
@@ -61,6 +61,8 @@
                 // Only add the bar if it's not already in the array
                 if (!current.includes(_barNo)) {
                     return [...current, _barNo];
+                } else {
+                    return current.filter(bar => bar !== _barNo); // Remove the bar if it's already in the array
                 }
                 return current; // No change if it's already in the array
             });
@@ -86,7 +88,7 @@
 
         <!-- replace with on:click later -->
         <button 
-        onclick={() => loopBar(i)} 
+        onclick={() => addLoopBar(i)} 
         class={`border-neutral-500 border-r-1 h-5 w-1/4 items-center flex p-1 flex-shrink-0 justify-end 
                 ${$loopedBars.includes(i) ? 'bg-amber-400' : 'bg-neutral-700'}`}
         >
