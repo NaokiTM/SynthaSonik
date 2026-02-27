@@ -2,7 +2,7 @@
 <script>
     import plus from '$lib/assets/plus.png'
     import keys from '$lib/assets/keys.png'
-    import { TracksArray } from "$lib/stores"
+    import { noOfTracks, TracksArray } from "$lib/stores"
 
     function addTrack() {
         TracksArray.update(arr => {
@@ -13,6 +13,7 @@
                 {id: nextId, instrument: "keys", sample: null, instrumentIcon: keys, color: "#00bf00", muted: false, regions: []}  //allow user to choose instrument before adding a track (do later)
             ]
         })
+        $noOfTracks++
     }
 </script>
 

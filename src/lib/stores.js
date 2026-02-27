@@ -67,6 +67,8 @@ export const whichMidiTrackOpen = writable(0)  //stores which track is open in t
 export const isLoopMode = writable(false)
 export const loopedBars = writable([])
 
+//number of tracks
+export const noOfTracks = writable(0)
 
 //booleans for toggling extra editors
 export const mixingDeckHidden = writable(true)

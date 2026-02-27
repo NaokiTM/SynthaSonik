@@ -99,13 +99,8 @@
 
     <!-- iteratively display bars on top of track body -->
     {#each bars as _, i}
-
         <!-- replace with on:click later -->
-        <button 
-        onclick={() => addLoopBar(i)} 
-        class={`border-neutral-500 border-r-1 h-5 w-1/4 items-center flex p-1 flex-shrink-0 justify-end 
-                ${$loopedBars.includes(i) ? 'bg-amber-400 rounded-md' : 'bg-neutral-700'}`}
-        >
+        <button onclick={() => addLoopBar(i)} class={`border-neutral-500 border-r-1 h-5 w-1/4 items-center flex p-1 flex-shrink-0 justify-end ${$loopedBars.includes(i) ? 'bg-amber-400 rounded-md' : 'bg-neutral-700'}`}>
         {i + 1}
         </button>
     {/each}
