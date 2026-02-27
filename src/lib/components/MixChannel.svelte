@@ -1,7 +1,15 @@
 <script lang="ts">
+  import { TracksArray, toggleMute } from "$lib/stores";
+
     export let min = 0;
     export let max = 150;
     export let value = 100;
+
+    export let trackId 
+
+    function toggleSolo() {
+
+    }
 </script>
 
 <div class="flex flex-col gap-4 items-center group">
@@ -55,6 +63,7 @@
         bg-[radial-gradient(circle,_#0767B5,_#032D4F)] 
         cursor-pointer
         hover:brightness-150"
+        onclick={() => toggleMute(trackId)}
         >M</button>
 
         <!-- Solo Button -->
@@ -70,7 +79,9 @@
         rounded-[3px]
         bg-[radial-gradient(circle,_#B89D14,_#524609)] 
         cursor-pointer
-        hover:brightness-150">S</button>
+        hover:brightness-150"
+        onclick={toggleSolo}
+        >S</button>
     </div>
 </div>
 

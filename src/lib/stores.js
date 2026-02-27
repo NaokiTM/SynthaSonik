@@ -79,7 +79,15 @@ export function toggleMute(id) {
   TracksArray.update(tracks =>
     tracks.map(t => t.id === id ? { ...t, muted: !t.muted } : t)
   );
+  console.log("muted")
 }
+
+//Toggle mute on a specific track
+// export function toggleSolo(id) {
+//   TracksArray.update(tracks =>
+//     tracks.map(t => t.id === id ? { ...t, muted: !t.muted } : t)
+//   );
+// }
 
 //Change instrument
 export function setInstrument(id, instrument) {

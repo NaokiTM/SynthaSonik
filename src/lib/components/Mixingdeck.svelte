@@ -44,7 +44,7 @@
         <div>R</div>
       </div>
     </div>
-    <MixChannel />
+    <MixChannel trackId={i}/>
   </div>
 {/each}
 </div>
