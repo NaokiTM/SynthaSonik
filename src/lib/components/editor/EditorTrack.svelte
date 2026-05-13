@@ -5,8 +5,13 @@
     $: trackIndex = $whichMidiTrackOpen
     // let clickedNoteIndex = null
 
+
+
+
+    // adds note to the midi editor track, if note already exists then remove it. if note doesnt exist then add it. default length of 1 (fills the bar clicked on)
     function handleNote(octaveIndex: number, rowIndex: number, barIndex: number) {
         // if note already exists then remove, if note doesnt exist then add. default length of 1 (fills the bar clicked on)
+
         const rowsPerOctave = 12
         const notePos = octaveIndex * rowsPerOctave + rowIndex;
 
@@ -43,9 +48,10 @@
             return copy;
         });
         //add the note in stores to the track, to a new region length 1, to a bar number, to pos. 
+      
     }
 
-    //helper function for checking if a note exists at a spot 
+    //helper function for checking if a note exists at a spot     function hasNoteHelper(octaveIndex: number, barIndex: number, rowIndex: number) {
     function hasNoteHelper(octaveIndex: number, barIndex: number, rowIndex: number) {
         const rowsPerOctave = 12
         const notePos = octaveIndex * rowsPerOctave + rowIndex
@@ -53,6 +59,7 @@
 
         //Get the bar number in the region (if the region exists which it should after clicking a note, then we let it show the note (region))
         const track = $TracksArray[trackIndex];
+
         if (!track) return false;
 
         const region = track.regions.find(r => r.barNo === barIndex);
@@ -61,6 +68,15 @@
         //Return true if it finds the matching note 
         return !!region.notes.find(note => note.pos === notePos)
     }
+
+
+
+    //resizing notes
+    // const resize
+
+
+
+  
 </script>
 
 <div class="">

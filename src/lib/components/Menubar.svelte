@@ -51,7 +51,7 @@
             <li><button class="btn text-slate-300 rounded-sm">Open project</button></li>
             <li><button class="btn text-slate-300 rounded-sm">Save project</button></li>
             <li><button class="btn text-slate-300 rounded-sm">Share</button></li>
-            <li><button class="btn text-slate-300 rounded-sm" on:click={importSample}>Import Sample</button></li>
+            <li><button class="btn text-slate-300 rounded-sm" on:click={importSample}>Import Sample as track</button></li>
             <li><button class="btn text-slate-300 rounded-sm">Close project</button></li>
         </ul>
     </div>
