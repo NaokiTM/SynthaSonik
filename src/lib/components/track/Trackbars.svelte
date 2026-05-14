@@ -1,3 +1,8 @@
+<!-- ************************************* -->
+<!-- BAR NUMBER INDICATORS-->
+<!-- a bar component on the top of the main interface and midi editor, showing bar numbers.-->
+<!-- ************************************* -->
+
 <script lang="ts">
     import minus from '$lib/assets/minus.png'
     import plus from '$lib/assets/plus.png'
@@ -12,7 +17,7 @@
     // //change to only apply to current bar 
     // let toBeLooped = false
 
-    //This is required to set a default headerwidth asap to determine what bar we are initially on (in stores.js)
+    //set the initial width of bars to match the width of track regions
     onMount(() => {
         caretHeaderWidth.set(caretHeader.getBoundingClientRect().width);
         //for resize
