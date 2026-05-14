@@ -18,15 +18,20 @@
     let holding = false;
     let caretHeader: HTMLElement
 
+
     //set the initial width of bars to match the width of track regions
     onMount(() => {
+
         // initially set caret header position based on initial parent width? 
         caretHeaderWidth.set(caretHeader.getBoundingClientRect().width);
+
 
         //adjust caret header position based on resize of parent?
         const resizeObserver = new ResizeObserver(() => {
           caretHeaderWidth.set(caretHeader.getBoundingClientRect().width);
         });
+
+
         resizeObserver.observe(caretHeader);
     });
 
@@ -34,10 +39,10 @@
     function moveCaret(e: MouseEvent) {
         if (!holding) return;
 
-        // 
+        //get the size of the caret header element
         const rect = caretHeader.getBoundingClientRect()
 
-        //whole screen - left offset from edge of screen to left of caretHeader, which gives the correct x coords
+        //new caret header position is the current mouse position (minus the slight offset from the caret header box)
         const newCaretHeaderPos = e.clientX - rect.left 
 
         //Ensure The caret header doesnt hide under track headers / corner stub thing
@@ -64,11 +69,8 @@
     //sets desired bars to be designated as looping
     function addLoopBar(_barNo: number) {
 
-        // if we are in loop mode (bars can be selected to be looped through)
+        // if we are in loop mode then allow for adding looping bars (bars can be selected to be looped through)
         if ($isLoopMode) {
-
-
-
             loopedBars.update(current => {
                 
 
