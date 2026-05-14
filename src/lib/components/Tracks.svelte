@@ -1,3 +1,9 @@
+<!-- ************************************* -->
+<!-- THE MAIN INTERFACE-->
+<!-- this file is the umbrella file that contains components tracks, their headers, the caret, and bar numbers on the main screen. -->
+<!-- ************************************* -->
+
+
 <script lang="ts">
   import { onMount } from "svelte";
   import { TracksArray, caretPos } from "$lib/stores";
@@ -9,53 +15,62 @@
   let headerEl: HTMLDivElement;
   let trackbarsEl: HTMLDivElement;
   let bodyEl: HTMLDivElement;
+  let caretHeight = 0
 
-    let caretHeight = 0
-
-    function updateCaretHeight() {
-        caretHeight = bodyEl.scrollHeight
-    }
+  //match caret height to track body height
+  function updateCaretHeight() {
+      caretHeight = bodyEl.scrollHeight
+  }
 
   onMount(() => {
+
+    // initially set caret height as body height on load, 
+    // .scrollHeight automatically updates so caret height always matches body height
     updateCaretHeight()
+
+    // listen continously for any scrolls
     bodyEl.addEventListener("scroll", () => {
       
-      // sync header and body vertical scrolling
+      // sync vertically scrolling components
       headerEl.scrollTop = bodyEl.scrollTop;
 
-      //sync body and bar numbers when horizontally scrolling
+      //sync horizontally scrolling components
       trackbarsEl.scrollLeft = bodyEl.scrollLeft;
     });
   });
 </script>
 
-<!-- Here the first column takes 20% of space (headers) and the column containing the body takes up remaining space on the right-->
-<!-- the first row contains trackoptions and tracksbars (auto sized) and the second row contains header and body (sized to fill)-->
+<!--first column (Trackoptions and track headers) take 20% of width, second (bar numbers and track bodies) takes 80%-->
 <div class="grid grid-cols-[20%_1fr] grid-rows-[auto_1fr] flex-1 text-white overflow-hidden">
-  <!-- Top-left -->
-  <div class="sticky top-0 left-0 z-2">  <!--sticks to the top and left to avoid any scroll interference-->
+  
+  <!-- ADD-TRACK BAR (Top-left) -->
+  <!--sticks top and left-->
+  <div class="sticky top-0 left-0 z-2">  
     <Trackoptions />
   </div>
 
-  <!-- Top -->
-  <!--sticks to the top when scrolling horizontally (but not to the left so we can scroll through bars)-->
+  <!-- BAR NUMBERS (top right)-->
+  <!--can scroll horizontally, cant scroll vertically -->
   <div class="sticky top-0 z-10 bg-neutral-700 overflow-hidden" bind:this={trackbarsEl}> 
     <Trackbars />
   </div>
 
-  <!-- Left -->
-  <!--sticks to the left when scrolling horizontally (but not to the top so we can still scroll through tracks)--> 
+  <!-- TRACK HEADERS (bottom left) -->
+  <!--cant scroll horizontally, can scroll vertically -->
   <div class="sticky left-0 bg-neutral-800 overflow-hidden" bind:this={headerEl}>    
     {#each $TracksArray as track (track.id)}
       <Trackheader {track} />
     {/each}
   </div>
 
-  <!-- Main body -->
+  <!-- TRACK BODIES (bottom right) -->
+  <!-- can scroll both horizontally and vertically -->
   <div class="relative overflow-auto bg-neutral-900 overscroll-none" bind:this={bodyEl}>
+
+    <!-- THE CARET -->
     <div class="h-full absolute top-0 bottom-0 w-[1px] bg-white" style="left: {$caretPos}px; height: {caretHeight}px;"></div>
 
-    <!-- pass props to track body to identify it uniquely -->
+    <!-- pass track id prop to each track body to identify it uniquely -->
     {#each $TracksArray as track, i (track.id)}
       <Trackbody {track} trackIndex={i} />
     {/each}

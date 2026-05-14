@@ -1,21 +1,21 @@
+<!-- ************************************* -->
+<!-- CHANNEL COMPONENT -->
+<!-- represents a single tracks channel (not volume channel) in the mixing deck -->
+<!-- ************************************* -->
+
 <script lang="ts">
-  import { TracksArray, toggleMute } from "$lib/stores";
-
-    export let min = 0;
-    export let max = 150;
-    export let value = 100;
-
+    import { toggleMute, toggleSolo } from "$lib/stores";
     export let trackId 
-
-    function toggleSolo() {
-
-    }
+  
+    //initial volume values for channel volume
+    export let minVolume = 0;
+    export let maxVolume = 100;
+    export let initialVolume = 50;
 </script>
 
-<div class="flex flex-col gap-4 items-center group">
 
-    <!-- Value display
-    <span id="slider-value" class="w-8 text-center text-black font-bold">{value}</span> -->
+
+<div class="flex flex-col gap-4 items-center group">
 
     <!-- Level Indicator and adjuster -->
     <div class="flex items-center gap-4">
@@ -25,29 +25,30 @@
         <input
         type="range"
         style="writing-mode: vertical-rl;"
-        min={min}
-        max={max}
-        bind:value
+        min={minVolume}
+        max={maxVolume}
+        bind:value={initialVolume}
         class="custom-thumb"
         />
 
         <!-- level meters -->
+        <!-- dynamically displays live volume in left and right gain channels (TO BE IMPLEMENTED)-->
         <div class="flex items-center gap-0 h-32">
-        <!-- left -->
-        <div id="left-meter" class="w-2 bg-[#353535] h-32"></div>
-        <!-- Seperator -->
-        <div class="w-0.5 bg-black h-32"></div>
-        <!-- right -->
-        <div id="right-meter" class="w-2 bg-[#353535] h-32"></div>
+            <!-- left -->
+            <div id="left-meter" class="w-2 bg-[#353535] h-32"></div>
+            <!-- Seperator -->
+            <div class="w-0.5 bg-black h-32"></div>
+            <!-- right -->
+            <div id="right-meter" class="w-2 bg-[#353535] h-32"></div>
         </div>
 
-        <!-- volume indicator on hover -->
+        <!-- volume indicator label on hover -->
         <div class="hidden absolute group-hover:block menu rounded-sm p-2 shadow text-neutral-300">
-            {value}
+            {initialVolume}
         </div>
     </div>
 
-    <!-- Mute / Solo Buttons -->
+
     <div class="flex items-center gap-4">
         <!-- Mute Button -->
         <button class="
@@ -80,12 +81,13 @@
         bg-[radial-gradient(circle,_#B89D14,_#524609)] 
         cursor-pointer
         hover:brightness-150"
-        onclick={toggleSolo}
+        onclick={() => toggleSolo(trackId)}
         >S</button>
     </div>
 </div>
 
 <style>
+    /* volume slider styling */
     .custom-thumb {
         writing-mode: vertical-rl;
         rotate: 180deg;
@@ -94,6 +96,7 @@
         background: #191919;
     }   
 
+    /* volume slider HANDLE styling */
     .custom-thumb::-webkit-slider-thumb {
         -webkit-appearance: none;
         width: 35px;
@@ -103,6 +106,7 @@
         clip-path: polygon(25% 25%, 75% 25%, 65% 50%, 75% 75%, 25% 75%, 35% 50%);
     }
 
+    /* slider handle styling for firefox */
     .custom-thumb::-moz-range-thumb {
         width: 35px;
         height: 50px;
