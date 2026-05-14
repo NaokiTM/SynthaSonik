@@ -1,6 +1,8 @@
 <!-- ************************************* -->
 <!-- BAR NUMBER INDICATORS-->
 <!-- a bar component on the top of the main interface and midi editor, showing bar numbers.-->
+<!-- caret HEADER logic is mostly here -->
+<!-- all logic for looping bars is also here -->
 <!-- ************************************* -->
 
 <script lang="ts">
@@ -8,49 +10,50 @@
     import plus from '$lib/assets/plus.png'
     import { currentBar, noOfBars, caretHeaderWidth, loopedBars, isLoopMode } from '$lib/stores';
     import { caretPos } from '$lib/stores';
-     import { onMount } from 'svelte';
-    $: bars = Array.from({length: $noOfBars}) //$ makes it a reactive variable to allow changes to the array when bars are dynamically added / removed
+    import { onMount } from 'svelte';
+
+    // dynamically gets number of bars to display
+    $: bars = Array.from({length: $noOfBars})
 
     let holding = false;
     let caretHeader: HTMLElement
 
-    // //change to only apply to current bar 
-    // let toBeLooped = false
-
     //set the initial width of bars to match the width of track regions
     onMount(() => {
+        // initially set caret header position based on initial parent width? 
         caretHeaderWidth.set(caretHeader.getBoundingClientRect().width);
-        //for resize
+
+        //adjust caret header position based on resize of parent?
         const resizeObserver = new ResizeObserver(() => {
           caretHeaderWidth.set(caretHeader.getBoundingClientRect().width);
         });
-
-        resizeObserver.observe(caretHeader);  //Observe the caretHeader for resizes
+        resizeObserver.observe(caretHeader);
     });
 
     //update caret position while dragging with a mouse
     function moveCaret(e: MouseEvent) {
         if (!holding) return;
 
+        // 
         const rect = caretHeader.getBoundingClientRect()
-        const newCaretPos = e.clientX - rect.left //whole screen - left offset from edge of screen to left of caretHeader, which gives the correct x coords
-        if (newCaretPos >= 0) {  //Ensure The caret doesnt hide under caretHeaders
-            $caretPos = newCaretPos  
+
+        //whole screen - left offset from edge of screen to left of caretHeader, which gives the correct x coords
+        const newCaretHeaderPos = e.clientX - rect.left 
+
+        //Ensure The caret header doesnt hide under track headers / corner stub thing
+        if (newCaretHeaderPos >= 0) {  
+            $caretPos = newCaretHeaderPos  
         }
-
-
-        // //To update currentbar with the 
-        // const barWidth = rect.width / 4;
-        // $currentBar = Math.floor($caretPos / barWidth);
     }
 
+    //detect when caret header is being dragged
     function startHolding() {
         holding = true
-
         window.addEventListener("mousemove", moveCaret)
         window.addEventListener("mouseup", stopHolding)
     }
 
+    // detect when caret header is not being dragged anymore
     function stopHolding() {
         holding = false
 
@@ -58,33 +61,53 @@
         window.removeEventListener("mouseup", stopHolding);
     }
 
-    function addLoopBar(_barNo) {
+    //sets desired bars to be designated as looping
+    function addLoopBar(_barNo: number) {
+
+        // if we are in loop mode (bars can be selected to be looped through)
         if ($isLoopMode) {
-            //if loop mode is on, then allow for highlighting this bar only.
-            //when the track starts playing, it will get as far as the highlighted bar, and at the end will replay the same part of the track
+
+
 
             loopedBars.update(current => {
+                
+
                 // Sort the loopedBars array to make sure it's always in order
                 const sortedBars = [...current].sort((a, b) => a - b);
 
-                // Only add the bar if it's not already in the array
+
+                // Only set the bar as looping if it's not already being looped
                 if (!current.includes(_barNo)) {
+
+
+                    //if only one bar is looping, dont check for adjacency
                     if (current.length === 0) {
                         return [...current, _barNo];
                     }
 
+
                     // Otherwise, check if the bar is adjacent to any of the existing bars
                     const isAdjacent = sortedBars.some(bar => bar === _barNo - 1 || bar === _barNo + 1);
 
+
+
                     if (isAdjacent) {
-                        return [...current, _barNo]; // Add the bar if it's adjacent
+                        // Add the bar if it's adjacent
+                        return [...current, _barNo]; 
                     } else {
-                        return current; // Do not add the bar if it's not adjacent
+                        // Do not add the bar if it's not adjacent
+                        return current; 
                     }
+
+
+
                 } else {
-                    return current.filter(bar => bar !== _barNo); // Remove the bar if it's already in the array
+                    // Remove the bar if it's already in the array (turn off looping for the selected bar)
+                    return current.filter(bar => bar !== _barNo); 
                 }
             });
+
+
         }
     }
 </script>
