@@ -7,7 +7,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { TracksArray, caretPos } from "$lib/stores";
-  import Trackoptions from "$lib/components/track/Trackoptions.svelte";
+  import Trackoptions from "$lib/components/track/Cornerheader.svelte";
   import Trackbars from "$lib/components/track/Trackbars.svelte";
   import Trackheader from "$lib/components/track/Trackheader.svelte";
   import Trackbody from "$lib/components/track/Trackbody.svelte";
