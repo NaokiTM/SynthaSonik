@@ -1,3 +1,8 @@
+<!-- ************************************* -->
+<!-- AUDIO REGION-->
+<!-- a single audio region component taking the track and region its in as paramters-->
+<!-- ************************************* -->
+
 <script>
     export let region;
     export let track;
