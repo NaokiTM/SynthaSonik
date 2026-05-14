@@ -5,7 +5,7 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import Dial from './Dial.svelte';
+  import Dial from './common/Dial.svelte';
   import MixChannel from './MixChannel.svelte';
   import { noOfTracks } from '$lib/stores';
 

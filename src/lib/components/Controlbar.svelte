@@ -23,7 +23,7 @@
     import { AudioEngine } from '../../audioEngine'
     import { onMount } from 'svelte'
     import Menubar from './Menubar.svelte';
-    import VolumeSlider from './track/VolumeSlider.svelte';
+    import VolumeSlider from './common/VolumeSlider.svelte';
 
     let audio
     let lastTimestamp;

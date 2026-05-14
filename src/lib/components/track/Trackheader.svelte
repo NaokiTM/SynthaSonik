@@ -3,9 +3,9 @@
     import muted from '$lib/assets/muted.png'
     import unmuted from '$lib/assets/unmuted.png'
     import { toggleMute } from '$lib/stores';
-    import Dial from '../Dial.svelte';
-    import ColorMenu from '../menus/ColorMenu.svelte';
-    import VolumeSlider from './VolumeSlider.svelte';
+    import Dial from '../common/Dial.svelte';
+    import ColorMenu from '../submenus/ColorMenu.svelte';
+    import VolumeSlider from '../common/VolumeSlider.svelte';
 
     function handleMute() {
         toggleMute(track.id)  //The actual toggleMute function is in stores.js

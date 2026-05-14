@@ -14,7 +14,7 @@
     }
 
     /* SLIDER HANDLE BELOW: */
-    /* Enables chrome, safari, newer edge styling */
+    /* Enables chrome, safari, newer edge styling */ 
     .vol-slider::-webkit-slider-thumb {
         -webkit-appearance: none; /* Override default look */
         appearance: none;
