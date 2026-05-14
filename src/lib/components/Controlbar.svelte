@@ -1,7 +1,12 @@
-<!-- BAR FOR TRACK CONTROLS (PLAY, PAUSE, RECORD ETC.) -->
+<!-- ************************************* -->
+<!-- CONTROL-BAR -->
+<!-- Bar for track controls (play, pause, record etc.) -->
+<!-- logic for play, pause, record, fastforward etc is handled here atm -->
+<!-- ************************************* -->
+
 
 <script>
-// @ts-nocheck
+    // @ts-nocheck
     import back from '$lib/assets/back.png'
     import play from '$lib/assets/play.png'
     import metronome from '$lib/assets/metronome.png'
@@ -12,31 +17,26 @@
     import loop from '$lib/assets/loop.png'
     import snip from '$lib/assets/snip.png'
     import mixer from '$lib/assets/mixer.png'
-
     import { currentBar, currentBeat, keySig, timeSig, tonality, accidental, octave, tempo, isPlaying, TracksArray, isLoopMode } from '$lib/stores'
     import { caretPos } from '$lib/stores'
-
     import { mixingDeckHidden } from "$lib/stores";
     import { AudioEngine } from '../../audioEngine'
     import { onMount } from 'svelte'
-  import Menubar from './Menubar.svelte';
-  import VolumeSlider from './track/VolumeSlider.svelte';
+    import Menubar from './Menubar.svelte';
+    import VolumeSlider from './track/VolumeSlider.svelte';
 
     let audio
-
-    onMount(() => {
-        audio = new AudioEngine; // runs only in browser
-    });
-
-    function toggleMixingDeck() {
-        mixingDeckHidden.update(value => !value);    
-    }
-
     let lastTimestamp;
     let animationFrame;
+    const tracks = $TracksArray;
+    const speed = 100 //speed of caret in pixels per second (change to be based on tempo + pixels per beat)
 
-    const speed = 100   //This is in pixels per second. This needs to be translated into tempo, and is NOT the tempo itself.
+    onMount(() => {
+        //initialize audio engine on mount so that there is no delay when user clicks play for the first time
+        audio = new AudioEngine;
+    });
 
+    //make tempo display stay within 3 digits
     function enforceThreeDigits(event) {
         let val = event.target.value.replace(/\D/g, ''); // strip non-digits
 
@@ -50,12 +50,12 @@
         event.target.value = val;
     }
 
+    // 
     async function playTracks() {
-        audio = new AudioEngine; // runs only in browser
+        audio = new AudioEngine;
 
-        //Loop thorugh all tracks and for as many tracks create an audio.newtrack, find the tracks sample and save as buffer, create a clip, and when all have looped through play the clips
-        //do later, fix unknown content type passed error when importing samples
-        const tracks = $TracksArray;
+        //FIX: unknown content type passed error when importing samples
+        //for all tracks, check for a sample, and if it exists then load into buffer and add as clip to play
         for (let i = 0; i < tracks.length; i++) { 
             let track = audio.addTrack() 
             const sample = tracks[i].sample; 
@@ -66,9 +66,9 @@
         }
 
         //First resets the boolean to false (in case its already true), and make it true again to run.
-        // idk why this works but it allows for clicking the play button multiple times
+        //idk why this works but it allows for clicking the play button multiple times
         isPlaying.set(true);
-        lastTimestamp = performance.now(); //What is this?
+        lastTimestamp = performance.now(); //What is this? 
 
         //starts moving caret
         animationFrame = requestAnimationFrame(nextCaretPos);
@@ -79,36 +79,43 @@
 
             // schedule the next play after a delay (e.g. 1 second)
             // adjust 1000 to your clip length in ms
+            // CHANGE TO PLAY IN SYNC BASED ON TRACK NOTES AND TEMPO
             setTimeout(playLoop, 1000);
         }
 
-        // // start the first play
+        //start the first playthrough
         playLoop();
     }
 
+    // pause all tracks, stop caret from moving (but not reset).
     function pauseTracks() {
         isPlaying.set(false);
         cancelAnimationFrame(animationFrame);
     }
 
+    // rewind all tracks and reset caret position to 0
     function rewindTracks() {
         isPlaying.set(false);
         cancelAnimationFrame(animationFrame);
         caretPos.set(0)
     }
 
-    function toggleLoopMode() {
-        //toggle to opposite setting
+    //toggle loop mode
+    function toggleLoopMode() { 
         isLoopMode.set(!$isLoopMode)
     }
 
-    //Comment later i dont really get what this does in detail
+    //Comment in detail later
     function nextCaretPos(timestamp) {        
         animationFrame = requestAnimationFrame(nextCaretPos);
         let toSeconds = (timestamp - lastTimestamp) / 1000; //Converts to seconds
         lastTimestamp = timestamp;
+        caretPos.update(pos => pos + speed * toSeconds); //I dont really get what this does in detail
+    }
 
-        caretPos.update(pos => pos + speed * toSeconds);
+    //We open the mixing deck from the control bar on the right, hence why this function is in the file
+    function toggleMixingDeck() {
+        mixingDeckHidden.update(value => !value);    
     }
 </script>
 
@@ -148,7 +155,7 @@
      </div>
 
 
-    <!-- track information -->
+    <!-- track information (the blue bit in the middle; this is straight gore at the minute) -->
      <div class="justify-center flex">
         <div class="bg-sky-900 flex text-sky-500 pl-1 w-fit rounded-lg pb-0.5">
             <div class="flex flex-col">
@@ -256,9 +263,6 @@
                 </button> -->
             </div>
         </div>
-
-
-
 </nav>
 
 <style>
