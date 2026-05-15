@@ -2,6 +2,10 @@
 
 import { derived, writable } from "svelte/store";
 import keys from '$lib/assets/keys.png'
+import drum from '$lib/assets/drum.png'
+import mic from '$lib/assets/mic.png'
+import guitar from '$lib/assets/guitar.png'
+
 
 
 //Need help differentiating if this sets the default header stuff when I create a new track, or if its the function in trackoptions.

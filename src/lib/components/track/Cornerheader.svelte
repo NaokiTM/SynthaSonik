@@ -6,8 +6,14 @@
 
 <script lang='ts'>
 import plus from '$lib/assets/plus.png'
-import keys from '$lib/assets/keys.png'
 import { noOfTracks, TracksArray, instrumentCounts } from "$lib/stores"
+
+import keys from '$lib/assets/keys.png'
+import drum from '$lib/assets/drum.png'
+import bass from '$lib/assets/bass.png'
+import mic from '$lib/assets/mic.png'
+import guitar from '$lib/assets/guitar.png'
+
 
 let trackMenuOpen = false;
 
@@ -18,6 +24,15 @@ const instruments = [
     "bass",
     "voice",
 ]
+
+// Create a mapping from instrument name to icon
+const instrumentIcons = {
+    keys: keys,
+    drums: drum,
+    guitar: guitar,
+    bass: bass,  // Use guitar icon for bass (or import a bass icon)
+    voice: mic,
+}
 
 function portal(node) {
     const target = document.body;
@@ -50,7 +65,7 @@ function addTrack(instrument: string) {
                 trackName: `${instrument}${currentCount + 1}`,
                 instrument: instrument,  // IMPORTANT!
                 sample: null, 
-                instrumentIcon: keys,
+                instrumentIcon: instrumentIcons[instrument],
                 color: "#ff4400", 
                 volume: 50, 
                 pan: 50, 
