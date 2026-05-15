@@ -14,6 +14,7 @@ export const TracksArray = writable([
     color: "#00bf00", //default color for track
     volume: 50,  //50% volume initially
     pan: 50, //balanced between left and right. more left tends to 0, right tends to 100. 
+    panAngle: 0,
     muted: false,
     regions: [  //start with no regions initially
       // { 
@@ -97,6 +98,14 @@ export function changeVolume(id, newVolume) {
     tracks.map(t => t.id === id ? { ...t, volume: newVolume } : t)
   );
 }
+
+// change the pan level of a track
+export function changePanLevel(id, newPan) {
+  TracksArray.update(tracks =>
+    tracks.map(t => t.id === id ? { ...t, pan: newPan } : t)
+  );
+}
+
 
 //Change instrument
 export function setInstrument(id, instrument) {

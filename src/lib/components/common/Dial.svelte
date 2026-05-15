@@ -4,12 +4,21 @@
 <!-- ************************************* -->
  
 <script lang="ts">
+    export let trackId: any
     import { onMount } from "svelte";
+    import { TracksArray } from "$lib/stores";
     let dial: HTMLElement;
     let holding = false;
     let dialCenter = { x: 0, y: 0 };
     let previousAngle = 0
 
+    $: track = $TracksArray.find(t => t.id === trackId);
+    $: angle = track?.panAngle ?? 0;
+
+
+    $: if (dial) {
+        dial.style.transform = `rotate(${angle}deg)`;
+    }
 
 
     //Onmount required since script runs before DOM created and thinks dial is null
@@ -68,6 +77,13 @@
         // update to the new indicator position
         previousAngle = indicatorAngle
         dial.style.transform = `rotate(${indicatorAngle}deg)`
+
+        TracksArray.update(tracks => {
+            const currentTrack = tracks[trackId];
+            currentTrack.panAngle = indicatorAngle;
+            currentTrack.pan = ((indicatorAngle + 135) / 270) * 100;
+            return tracks;
+        });
     }
     
 

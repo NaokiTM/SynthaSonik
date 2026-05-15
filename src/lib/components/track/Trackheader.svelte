@@ -52,7 +52,7 @@
         <div class="absolute right-0 pr-1 pt-1">
             <div class="flex items-end">
                 <div class="text-xs">L</div>
-                <Dial></Dial>
+                <Dial trackId = {track.id} />
                 <div class="text-xs">R</div>
             </div>
         </div>

@@ -33,7 +33,7 @@
             const url = URL.createObjectURL(file);
 
             //create new track with the imported sample
-            TracksArray.update(tracks => [...tracks, { id: tracks.length, instrument: "sample", sample: url, instrumentIcon: waveformIcon, color: "#00bf00", volume: 50, pan: 50, muted: false, regions: [] }]);
+            TracksArray.update(tracks => [...tracks, { id: tracks.length, instrument: "sample", sample: url, instrumentIcon: waveformIcon, color: "#00bf00", volume: 50, pan: 50, panAngle: 0, muted: false, regions: [] }]);
         };
         input.click();
     }
