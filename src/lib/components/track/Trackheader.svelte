@@ -8,7 +8,7 @@
     // @ts-ignore
     export let track: any  //Track is the variable containing the current track object (things unique to this track)
     import { onMount } from 'svelte';
-    import { toggleMute, toggleSolo, TracksArray } from '$lib/stores';
+    import { toggleMute, toggleSolo, TracksArray, instrumentCounts } from '$lib/stores';
     import Dial from '../common/Dial.svelte';
     import ColorMenu from '../submenus/ColorMenu.svelte';
     import VolumeSlider from '../common/VolumeSlider.svelte';
@@ -38,17 +38,12 @@
             return;
         }
 
+        // NO instrumentCounts.update() - just update TracksArray and it auto-updates!
+        
         TracksArray.update(tracks =>
             tracks
-                // remove deleted track
                 .filter(t => t.id !== track.id)
-
-                // shift higher IDs down
-                .map(t =>
-                    t.id > track.id
-                        ? { ...t, id: t.id - 1 }
-                        : t
-                )
+                .map(t => t.id > track.id ? { ...t, id: t.id - 1 } : t)
         );
     }
 

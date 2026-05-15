@@ -8,7 +8,8 @@ import keys from '$lib/assets/keys.png'
 export const TracksArray = writable([
   {
     id: 0,
-    trackName: "keys",
+    trackName: "keys1",
+    instrument: "keys",
     instrumentIcon: keys,
     sample: null,
     color: "#ff4400", //default color for track
@@ -35,6 +36,14 @@ export const TracksArray = writable([
 ]);
 
 
+// Derive instrument counts from TracksArray automatically
+export const instrumentCounts = derived(TracksArray, $tracks => {
+    const counts = {};
+    $tracks.forEach(track => {
+        counts[track.instrument] = (counts[track.instrument] || 0) + 1;
+    });
+    return counts;
+});
 
 
 //Global states for song information
@@ -73,6 +82,7 @@ export const loopedBars = writable([])
 
 //number of tracks
 export const noOfTracks = writable(0)
+
 
 //booleans for toggling extra editors
 export const mixingDeckHidden = writable(true)

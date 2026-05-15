@@ -5,61 +5,68 @@
 
 
 <script lang='ts'>
-    import plus from '$lib/assets/plus.png'
-    import keys from '$lib/assets/keys.png'
-    import { noOfTracks, TracksArray } from "$lib/stores"
+import plus from '$lib/assets/plus.png'
+import keys from '$lib/assets/keys.png'
+import { noOfTracks, TracksArray, instrumentCounts } from "$lib/stores"
 
-    let trackMenuOpen = false;
-    let chosenInstrument: string
+let trackMenuOpen = false;
 
-    const instruments = [
-        "keys",
-        "drums",
-        "guitar",
-        "bass",
-        "voice",
-    ]
+const instruments = [
+    "keys",
+    "drums",
+    "guitar",
+    "bass",
+    "voice",
+]
 
-    // small action that moves the node to document.body to avoid clipping by
-    // parent stacking contexts / overflow. This preserves Svelte bindings/events.
-    function portal(node) {
-        const target = document.body;
-        target.appendChild(node);
-        return {
-            destroy() {
-                if (node.parentNode) node.parentNode.removeChild(node);
+function portal(node) {
+    const target = document.body;
+    target.appendChild(node);
+    return {
+        destroy() {
+            if (node.parentNode) node.parentNode.removeChild(node);
+        }
+    };
+}
+
+function toggleTrackMenu() {
+    trackMenuOpen = !trackMenuOpen
+}
+
+function addTrack(instrument: string) {
+    // Get current count using $ prefix (read-only from derived store)
+    const currentCount = $instrumentCounts[instrument] || 0;
+    
+    // NO instrumentCounts.update() - it updates automatically!
+
+    TracksArray.update(arr => {
+        let maxId = arr.length ? Math.max(...arr.map(t => t.id)) : -1; 
+        let nextId = maxId + 1;            
+        
+        return [  
+            ...arr, 
+            {
+                id: nextId, 
+                trackName: `${instrument}${currentCount + 1}`,
+                instrument: instrument,  // IMPORTANT!
+                sample: null, 
+                instrumentIcon: keys,
+                color: "#ff4400", 
+                volume: 50, 
+                pan: 50, 
+                panAngle: 0, 
+                muted: false, 
+                soloed: false, 
+                regions: []
             }
-        };
-    }
+        ];
+    });
+    
+    $noOfTracks++;
+    trackMenuOpen = false;
+}
 
-    // used to toggle the track menu (for instrument selection)
-    function toggleTrackMenu() {
-        trackMenuOpen = !trackMenuOpen
-    }
-
-    function addTrack(instrument: string) {
-        TracksArray.update(arr => {
-
-            //calculates the index of the last track added (number of tracks that currently exist basically)
-            let maxId = arr.length ? Math.max(...arr.map(t => t.id)) : 0; 
-
-            //calculate index for the to-be-added track (current last track + 1)
-            let nextId = maxId + 1;            
-
-
-            //Return a copy of the previous tracks array + object for the track to be added
-            return [  
-                ...arr, 
-                {id: nextId, trackName: instrument, sample: null, instrumentIcon: keys, color: "#ff4400", volume: 50, pan: 50, panAngle: 0, muted: false, soloed: false, regions: []}  //allow user to choose instrument before adding a track (do later)
-            ]
-        })
-
-        // once the track added update the counter for the tracks
-        $noOfTracks++
-        trackMenuOpen = false
-    }
 </script>
-
 
 <div class="h-5 w-full bg-neutral-500">
     <!--button to add a new track-->

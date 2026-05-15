@@ -112,7 +112,7 @@
 <!-- LOOPS THROUGH EACH BAR OF EACH TRACK AND DISPLAYS REGION IF REGION HAS BEEN ADDED-->
 <div class="bg-neutral-900 h-15 border-neutral-600 border-r-1 flex" bind:this={tracksArea}>
 
-  
+
     <!-- LOOP THROUGH EACH BAR -->
     {#each Array.from({ length: $noOfBars }) as _, barIndex}
 
@@ -120,8 +120,6 @@
         <!-- THE DIV CONTAINING A BAR CELL -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div class="border-neutral-800 border-1 w-1/4 h-15 p-0 flex-shrink-0" on:contextmenu={(e) => handleRightClick(e, trackIndex, barIndex)}>
-
-
           
             <!-- DISPLAY REGION IF THE BAR CONTAINS A REGION-->
             {#each track.regions.filter(region => region.barNo === barIndex) as region} 
