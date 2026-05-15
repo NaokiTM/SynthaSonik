@@ -22,7 +22,7 @@
             //Return a copy of the previous tracks array + object for the track to be added
             return [  
                 ...arr, 
-                {id: nextId, instrument: "keys", sample: null, instrumentIcon: keys, color: "#00bf00", muted: false, regions: []}  //allow user to choose instrument before adding a track (do later)
+                {id: nextId, instrument: "keys", sample: null, instrumentIcon: keys, color: "#00bf00", volume: 50, pan: 50, muted: false, regions: []}  //allow user to choose instrument before adding a track (do later)
             ]
         })
 

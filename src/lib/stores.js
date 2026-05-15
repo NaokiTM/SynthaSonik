@@ -12,6 +12,8 @@ export const TracksArray = writable([
     instrumentIcon: keys,
     sample: null,
     color: "#00bf00", //default color for track
+    volume: 50,
+    pan: 50,
     muted: false,
     regions: [  //start with no regions initially
       // { 
