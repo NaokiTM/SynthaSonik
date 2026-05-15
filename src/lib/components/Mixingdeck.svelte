@@ -40,21 +40,26 @@
 </script>
 
 <!-- mixing deck container-->
-<div class="relative bottom-0 w-full h-[30vh] bg-[#5C5B5B] flex justify-start pl-8 items-center gap-5 border-t-1 border-neutral-400 z-30">
+<div class="relative bottom-0 w-full h-[30vh] bg-[#5C5B5B] flex justify-start items-center gap-5 border-t-1 border-neutral-400 z-30 overflow-hidden pr-10">
   
-  <!--all channels displayed in container-->
-  {#each { length: visibleChannelCount + 1} as _, trackId (trackId)}
-    <div class="space-y-2">
-      <div class="pl-1.5">
-        <div class="flex items-end text-neutral-300 text-xs">
-          <div>L</div>
-          <Dial trackId = {trackId} />
-          <div>R</div>
+  <!-- scroll container (allows overflow scrolling) -->
+  <div class="flex gap-5 items-center h-full pl-7 overflow-x-auto overflow-y-hidden">
+
+    <!--all channels displayed in container-->
+    {#each { length: visibleChannelCount + 1} as _, trackId (trackId)}
+      <div class="space-y-2">
+        <div class="pl-1.5">
+          <div class="flex items-end text-neutral-300 text-xs">
+            <div>L</div>
+            <Dial trackId = {trackId} />
+            <div>R</div>
+          </div>
         </div>
+        <MixChannel trackId={trackId}/>
       </div>
-      <MixChannel trackId={trackId}/>
-    </div>
-  {/each}
+    {/each}
+
+  </div>
 
   <img src={plus} alt='add' class="absolute top-2 right-2 hover:cursor-pointer rotate-45" on:click={toggleMixingDeck}>
 
