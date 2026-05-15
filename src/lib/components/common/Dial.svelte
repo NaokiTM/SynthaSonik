@@ -78,6 +78,7 @@
         previousAngle = indicatorAngle
         dial.style.transform = `rotate(${indicatorAngle}deg)`
 
+        // update the pan value and the dial angle of a track when moved
         TracksArray.update(tracks => {
             const currentTrack = tracks[trackId];
             currentTrack.panAngle = indicatorAngle;
