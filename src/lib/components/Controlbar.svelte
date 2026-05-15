@@ -17,7 +17,7 @@
     import loop from '$lib/assets/loop.png'
     import snip from '$lib/assets/snip.png'
     import mixer from '$lib/assets/mixer.png'
-    import { currentBar, currentBeat, keySig, timeSig, tonality, accidental, octave, tempo, isPlaying, TracksArray, isLoopMode } from '$lib/stores'
+    import { currentBar, currentBeat, keySig, timeSig, tonality, accidental, octave, tempo, isPlaying, TracksArray, isLoopMode, toggleMixingDeck } from '$lib/stores'
     import { caretPos } from '$lib/stores'
     import { mixingDeckHidden } from "$lib/stores";
     import { AudioEngine } from '../../audioEngine'
@@ -113,10 +113,7 @@
         caretPos.update(pos => pos + speed * toSeconds); //I dont really get what this does in detail
     }
 
-    //We open the mixing deck from the control bar on the right, hence why this function is in the file
-    function toggleMixingDeck() {
-        mixingDeckHidden.update(value => !value);    
-    }
+
 </script>
 
 <nav class="bg-[#292828] text-white space-x-2 flex items-center text-sm p-2">

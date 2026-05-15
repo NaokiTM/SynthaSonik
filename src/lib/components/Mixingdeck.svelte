@@ -8,7 +8,9 @@
   import { onMount } from 'svelte';
   import Dial from './common/Dial.svelte';
   import MixChannel from './MixChannel.svelte';
-  import { noOfTracks } from '$lib/stores';
+  import { noOfTracks, toggleMixingDeck } from '$lib/stores';
+  import plus from '$lib/assets/plus.png'
+
 
   let windowWidth = 0;  
   let visibleChannelCount = 0;
@@ -38,7 +40,7 @@
 </script>
 
 <!-- mixing deck container-->
-<div class="bottom-0 w-full h-[30vh] bg-[#5C5B5B] flex justify-start pl-8 items-center gap-5 border-t-1 border-neutral-400 z-30">
+<div class="relative bottom-0 w-full h-[30vh] bg-[#5C5B5B] flex justify-start pl-8 items-center gap-5 border-t-1 border-neutral-400 z-30">
   
   <!--all channels displayed in container-->
   {#each { length: visibleChannelCount + 1} as _, trackId (trackId)}
@@ -53,5 +55,7 @@
       <MixChannel trackId={trackId}/>
     </div>
   {/each}
+
+  <img src={plus} alt='add' class="absolute top-2 right-2 hover:cursor-pointer rotate-45" on:click={toggleMixingDeck}>
 
 </div>

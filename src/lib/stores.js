@@ -132,6 +132,11 @@ export function toggleSolo(id) {
   });
 }
 
+//We open the mixing deck from the control bar on the right, hence why this function is in the file
+export function toggleMixingDeck() {
+    mixingDeckHidden.update(value => !value);    
+}
+
 // change the volume of a track 
 export function changeVolume(id, newVolume) {
   TracksArray.update(tracks =>
