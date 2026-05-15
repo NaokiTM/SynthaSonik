@@ -15,4 +15,4 @@ PLAYBACK
 - pitch shift the notes being played??? 
 
 MIXING DECK
-- fix overflow to be hidden when number of channels overflows the deck (make a subcontainer than can scroll? )
+- fix long names from increasing the width of channels (make them overflow underneath? or scroll sideways)

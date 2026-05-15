@@ -4,12 +4,13 @@
 <!-- ************************************* -->
 
 <script lang="ts">
-  export let trackId
   import { onMount } from 'svelte';
   import Dial from './common/Dial.svelte';
   import MixChannel from './MixChannel.svelte';
-  import { noOfTracks, toggleMixingDeck } from '$lib/stores';
+  import { noOfTracks, toggleMixingDeck, TracksArray } from '$lib/stores';
   import plus from '$lib/assets/plus.png'
+
+
 
 
   let windowWidth = 0;  
@@ -43,19 +44,27 @@
 <div class="relative bottom-0 w-full h-[30vh] bg-[#5C5B5B] flex justify-start items-center gap-5 border-t-1 border-neutral-400 z-30 overflow-hidden pr-10">
   
   <!-- scroll container (allows overflow scrolling) -->
-  <div class="flex gap-5 items-center h-full pl-7 overflow-x-auto overflow-y-hidden">
+  <div class="flex items-center h-full pl-7 overflow-x-auto overflow-y-hidden">
 
     <!--all channels displayed in container-->
     {#each { length: visibleChannelCount + 1} as _, trackId (trackId)}
-      <div class="space-y-2">
-        <div class="pl-1.5">
-          <div class="flex items-end text-neutral-300 text-xs">
-            <div>L</div>
-            <Dial trackId = {trackId} />
-            <div>R</div>
+      {@const track = $TracksArray.find(t => t.id === trackId)}
+
+      <div class="{trackId !== 0 ? 'border-r border-black' : 'border-l-1 border-r-1'} h-full flex-shrink-0">
+        <div class="space-y-2 p-4">
+          <div class="pl-1.5">
+            <div class="flex items-end text-neutral-300 text-xs">
+              <div>L</div>
+              <Dial trackId = {trackId} />
+              <div>R</div>
+            </div>
           </div>
+          <MixChannel trackId={trackId}/>
         </div>
-        <MixChannel trackId={trackId}/>
+
+        <div style="background-color: {track?.color}" class="flex justify-center">
+          {track?.instrument}
+        </div>
       </div>
     {/each}
 
