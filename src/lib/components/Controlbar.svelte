@@ -113,6 +113,8 @@
         caretPos.update(pos => pos + speed * toSeconds); //I dont really get what this does in detail
     }
 
+    
+
 
 </script>
 

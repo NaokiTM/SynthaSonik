@@ -5,8 +5,8 @@
 
 <script lang="ts">
     import { TracksArray, toggleMute, toggleSolo, changeVolume } from "$lib/stores";
-  import MuteButton from "./common/MuteButton.svelte";
-  import SoloButton from "./common/SoloButton.svelte";
+    import MuteButton from "./common/MuteButton.svelte";  
+    import SoloButton from "./common/SoloButton.svelte";
     export let trackId 
 
     $: track = $TracksArray.find(t => t.id === trackId);

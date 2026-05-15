@@ -4,21 +4,83 @@
 <!-- ************************************* -->
 
 
-<script>
+<script lang='ts'>
     // @ts-ignore
     export let track  //Track is the variable containing the current track object (things unique to this track)
-    import muted from '$lib/assets/muted.png'
-    import unmuted from '$lib/assets/unmuted.png'
-    import { toggleMute, toggleSolo } from '$lib/stores';
+    import { onMount } from 'svelte';
+    import { toggleMute, toggleSolo, TracksArray } from '$lib/stores';
     import Dial from '../common/Dial.svelte';
     import ColorMenu from '../submenus/ColorMenu.svelte';
     import VolumeSlider from '../common/VolumeSlider.svelte';
-  import MuteButton from '../common/MuteButton.svelte';
-  import SoloButton from '../common/SoloButton.svelte';
+    import MuteButton from '../common/MuteButton.svelte';
+    import SoloButton from '../common/SoloButton.svelte';
+
+    // initialise open menu x and y coordinates
+    let menuX = 0;
+    let menuY = 0;
+
+    //represents the entire track body area (used to calculate where user right clicked)
+    let tracksArea: HTMLElement
+
+    //right click pop up menu is initially hidden 
+    let showMenu = false;
+
+    // which bar and which track the user opened the menu in
+    let clickedTrackIndex: any = null;
+
+    function deleteTrack() {
+        if (track.id === 0) {
+            console.log("can't delete first track (to be fixed...)");
+            return;
+        }
+
+        TracksArray.update(tracks =>
+            tracks
+                // remove deleted track
+                .filter(t => t.id !== track.id)
+
+                // shift higher IDs down
+                .map(t =>
+                    t.id > track.id
+                        ? { ...t, id: t.id - 1 }
+                        : t
+                )
+        );
+    }
+
+        //OPEN RIGHT CLICK MENU FOR THE SELECTED TRACK AND BAR EXACTLY WHERE THE CLICK HAPPENED
+    function handleRightClick(e: any, trackIndex: any) {
+      
+        //get the tracksArea as its dimensions
+        const tracksAreaRect = tracksArea.getBoundingClientRect()
+
+        //stop browser right click menu interfering with our custom right click menu
+        e.preventDefault();
+
+        // the right click popup menu is now showing
+        showMenu = true;
+
+        // Convert global mouse position into coordinates relative to the track container
+        menuX = e.pageX - tracksAreaRect.left;
+        menuY = e.pageY - tracksAreaRect.top;
+
+        // Store which track + bar this action applies to
+        clickedTrackIndex = trackIndex;
+    }
+
+        //listener to close right click menu if anywhere in the track body clicked 
+    onMount(() => {
+      const closeMenu = () => (showMenu = false);
+      document.addEventListener("click", closeMenu);
+      return () => document.removeEventListener("click", closeMenu);
+    });
+
 
 </script>
 
-<div class="bg-neutral-600 w-full h-15 border-neutral-500 border-b-1 flex space-x-2 relative">
+<div class="bg-neutral-600 w-full h-15 border-neutral-500 border-b-1 flex space-x-2 relative " bind:this={tracksArea} on:contextmenu={(e) => handleRightClick(e, clickedTrackIndex)}>
+
+
     <div class="border-r-1 w-5 border-r-neutral-500 items-center justify-center flex">
         {track.id + 1}
     </div>
@@ -52,6 +114,19 @@
         </div>
     </div>
 </div>
+
+
+
+{#if showMenu}
+  <ul
+    class="absolute bg-white text-black rounded shadow-md"
+    style="top: {menuY}px; left: {menuX}px;"
+  >
+    <li class="px-4 py-2 hover:bg-gray-200" on:click={deleteTrack}>Delete Track</li>
+  </ul>
+{/if}
+
+
 
 <style>
     /* The slider itself */
