@@ -6,7 +6,7 @@
 
 <script lang='ts'>
     // @ts-ignore
-    export let track  //Track is the variable containing the current track object (things unique to this track)
+    export let track: any  //Track is the variable containing the current track object (things unique to this track)
     import { onMount } from 'svelte';
     import { toggleMute, toggleSolo, TracksArray } from '$lib/stores';
     import Dial from '../common/Dial.svelte';
@@ -122,7 +122,7 @@
     class="absolute bg-white text-black rounded shadow-md"
     style="top: {menuY}px; left: {menuX}px;"
   >
-    <li class="px-4 py-2 hover:bg-gray-200" on:click={deleteTrack}>Delete Track</li>
+    <li class="px-4 py-2 hover:bg-gray-200" on:click={deleteTrack}>Delete Track "{track.instrument}"</li>
   </ul>
 {/if}
 
