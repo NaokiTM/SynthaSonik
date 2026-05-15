@@ -19,13 +19,11 @@
   function calculateMaxChannels(width: number, tracks: number) {
     const totalWidthPerChannel = channelWidth + gap;
     const maxThatFit = Math.floor(width / totalWidthPerChannel);
-
     visibleChannelCount = Math.min(tracks, maxThatFit);
   }
-  
+
+  //visibleChannelCount changes as noOfTracks does. every time either windowwidth (below) or noOfTracks changes, it recalculates.
   $: calculateMaxChannels(windowWidth, $noOfTracks);
-
-
 
   onMount(() => {
     // calculate max channels that fit on load initially
