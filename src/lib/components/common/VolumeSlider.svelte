@@ -1,5 +1,15 @@
+<script lang='ts'>
+    export let trackId: number;
+    export let volume: number = 50;
+    import { TracksArray, changeVolume } from "$lib/stores";
+
+    $: track = $TracksArray.find(t => t.id === trackId);
+    
+</script>
+
+<!-- THE SLIDER INPUT-->
 <div class="">
-    <input type="range" min="1" max="100" value="50" class="w-30 h-3 vol-slider rounded-xl bg-neutral-900">    
+    <input type="range" min="1" max="100" value={track?.volume} oninput={(e) => changeVolume(trackId, +e.currentTarget.value)} class="w-30 h-3 vol-slider rounded-xl bg-neutral-900">    
 </div>
 
 <style>

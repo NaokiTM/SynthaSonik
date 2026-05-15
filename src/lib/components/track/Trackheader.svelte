@@ -44,8 +44,7 @@
             </button>
 
             <!-- VOLUME SLIDER -->
-            <!-- pass track.id to VolumeSlider later to adjust volume-->
-            <VolumeSlider></VolumeSlider>
+            <VolumeSlider trackId={track.id} /> 
 
         </div>
 

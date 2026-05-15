@@ -4,13 +4,10 @@
 <!-- ************************************* -->
 
 <script lang="ts">
-    import { toggleMute, toggleSolo } from "$lib/stores";
+    import { TracksArray, toggleMute, toggleSolo, changeVolume } from "$lib/stores";
     export let trackId 
-  
-    //initial volume values for channel volume
-    export let minVolume = 0;
-    export let maxVolume = 100;
-    export let initialVolume = 50;
+
+    $: track = $TracksArray.find(t => t.id === trackId);
 </script>
 
 
@@ -23,12 +20,15 @@
 
         <!-- Vertical slider -->
         <input
-        type="range"
-        style="writing-mode: vertical-rl;"
-        min={minVolume}
-        max={maxVolume}
-        bind:value={initialVolume}
-        class="custom-thumb"
+            type="range"
+            style="writing-mode: vertical-rl;"
+            min={0}
+            max={100}
+            value={track?.volume ?? 50}
+            oninput={(e) =>
+                changeVolume(trackId, +e.currentTarget.value)
+            }
+            class="custom-thumb"
         />
 
         <!-- level meters -->
@@ -44,7 +44,7 @@
 
         <!-- volume indicator label on hover -->
         <div class="hidden absolute group-hover:block menu rounded-sm p-2 shadow text-neutral-300">
-            {initialVolume}
+            {track?.volume ?? 50}
         </div>
     </div>
 

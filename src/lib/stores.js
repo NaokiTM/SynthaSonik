@@ -12,8 +12,8 @@ export const TracksArray = writable([
     instrumentIcon: keys,
     sample: null,
     color: "#00bf00", //default color for track
-    volume: 50,
-    pan: 50,
+    volume: 50,  //50% volume initially
+    pan: 50, //balanced between left and right. more left tends to 0, right tends to 100. 
     muted: false,
     regions: [  //start with no regions initially
       // { 
@@ -88,6 +88,13 @@ export function toggleMute(id) {
 export function toggleSolo(id) {
   TracksArray.update(tracks =>
     tracks.map(t => t.id === id ? { ...t, muted: !t.muted } : t)
+  );
+}
+
+// change the volume of a track 
+export function changeVolume(id, newVolume) {
+  TracksArray.update(tracks =>
+    tracks.map(t => t.id === id ? { ...t, volume: newVolume } : t)
   );
 }
 
