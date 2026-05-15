@@ -107,7 +107,7 @@
     <div class="border-r-1 w-5 border-r-neutral-500 items-center justify-center flex">
         {track.id + 1}
     </div>
-    <img src={track.instrumentIcon} alt='instrumentIcon' class="pb-2 pt-1 pl-1">
+    <img src={track.instrumentIcon} alt='instrumentIcon' class="pb-2 pt-1 pl-1 scale-80">
     <div class="flex flex-col pt-1">
 
         <!-- TRACK COLOR MENU --> 
