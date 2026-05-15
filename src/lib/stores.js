@@ -8,7 +8,7 @@ import keys from '$lib/assets/keys.png'
 export const TracksArray = writable([
   {
     id: 0,
-    instrument: "keys",
+    trackName: "keys",
     instrumentIcon: keys,
     sample: null,
     color: "#ff4400", //default color for track

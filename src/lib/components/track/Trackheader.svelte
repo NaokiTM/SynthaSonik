@@ -19,6 +19,10 @@
     let menuX = 0;
     let menuY = 0;
 
+    let editing = false;
+
+    let newName = ""
+
     //represents the entire track body area (used to calculate where user right clicked)
     let tracksArea: HTMLElement
 
@@ -46,6 +50,29 @@
                         : t
                 )
         );
+    }
+
+    // called when renaming the track 
+    function renameTrack(newName: string) {
+        const cleaned = newName.trim();
+
+        if (cleaned.length === 0) {
+            // optionally reset to old name instead of saving empty
+            newName = track.trackName;
+            editing = false;
+            return;
+        }
+
+
+        TracksArray.update(tracks =>
+            tracks.map(t =>
+                t.id === track.id
+                    ? { ...t, trackName: newName }
+                    : t
+            )
+        );
+
+        editing = false;
     }
 
         //OPEN RIGHT CLICK MENU FOR THE SELECTED TRACK AND BAR EXACTLY WHERE THE CLICK HAPPENED
@@ -88,10 +115,19 @@
     <div class="flex flex-col pt-1">
 
         <!-- TRACK COLOR MENU -->
-        <div class="flex items-center">
-            <ColorMenu trackId={track.id}/>
-            <div>{track.instrument}</div>
-        </div>
+        {#if editing}
+            <input
+                bind:value={newName}
+                autofocus
+                on:blur={() => renameTrack(newName)}
+                on:keydown={(e) => e.key === 'Enter' && renameTrack(newName)}
+                class="bg-neutral-700 text-white px-1"
+            />
+        {:else}
+            <div on:dblclick={() => editing = true}>
+                {track.trackName}
+            </div>
+        {/if}
 
         <!-- CONTAINER FOR MUTE AND VOLUME CONTROLS -->
         <div class="flex flex-row mt-1 space-x-1">
@@ -122,7 +158,7 @@
     class="absolute bg-white text-black rounded shadow-md"
     style="top: {menuY}px; left: {menuX}px;"
   >
-    <li class="px-4 py-2 hover:bg-gray-200" on:click={deleteTrack}>Delete Track "{track.instrument}"</li>
+    <li class="px-4 py-2 hover:bg-gray-200" on:click={deleteTrack}>Delete Track "{track.trackName}"</li>
   </ul>
 {/if}
 
