@@ -16,3 +16,9 @@ PLAYBACK
 
 MIXING DECK
 - fix long names from increasing the width of channels (make them overflow underneath? or scroll sideways)
+
+BACKEND
+- change the tracksarray into a factory for tracks instead of basing it all off of an existing array entry 
+
+TRACK HEADER
+- allow for deletion of tracks (right click menu, double check before deletion.)
