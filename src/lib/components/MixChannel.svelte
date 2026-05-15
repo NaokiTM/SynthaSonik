@@ -52,12 +52,12 @@
 
 
     <div class="flex items-center gap-4">
-        <MuteButton onClick={() => toggleMute(trackId)}/>
-        <SoloButton onClick={() => toggleSolo(trackId)} />
+        <MuteButton trackId={track?.id} onClick={() => toggleMute(trackId)}/>
+        <SoloButton trackId={track?.id} onClick={() => toggleSolo(trackId)} />
     </div>
 </div>
 
-<style>
+<style> 
     /* volume slider styling */
     .custom-thumb {
         writing-mode: vertical-rl;

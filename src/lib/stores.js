@@ -11,7 +11,7 @@ export const TracksArray = writable([
     instrument: "keys",
     instrumentIcon: keys,
     sample: null,
-    color: "#00bf00", //default color for track
+    color: "#ff4400", //default color for track
     volume: 50,  //50% volume initially
     pan: 50, //balanced between left and right. more left tends to 0, right tends to 100. 
     panAngle: 0,

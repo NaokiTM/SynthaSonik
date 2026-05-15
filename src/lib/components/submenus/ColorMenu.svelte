@@ -1,9 +1,19 @@
-<script>
+<script lang="ts">
     import { onDestroy } from 'svelte';
     export let trackId;
     import { TracksArray } from '$lib/stores';
 
     let colorMenuOpen = false;
+
+    const colors = [
+        '#ff0033', // red
+        '#ff4400', // orange
+        '#ffea00', // yellow
+        '#00bf00', // green
+        '#004491', // blue
+        '#a800fc', // purple
+        '#ff42dc'  // pink
+    ];
 
     function toggleColorMenu() {
         colorMenuOpen = !colorMenuOpen;
@@ -20,7 +30,23 @@
             }
         };
     }
+
+    // helper function to set colour
+    function setTrackColor(color: string) {
+        TracksArray.update(tracks =>
+            tracks.map(t =>
+                t.id === trackId
+                    ? { ...t, color }
+                    : t
+            )
+        );
+        colorMenuOpen = false;
+    }
+
+
+
 </script>
+
 
 <div class="pr-2 align-center flex">
     <button class="w-4 h-4 bg-gray-700 rounded-md" style="background-color: {$TracksArray[trackId].color}" on:click={toggleColorMenu}></button>
@@ -30,22 +56,15 @@
             <div class="bg-neutral-800 text-white rounded-lg p-8" on:click|stopPropagation>
                 <h2 class="text-lg font-semibold mb-4">Select Track Color</h2>
                 <div class="grid grid-cols-10 w-fill">
-                    <!-- Example color options -->
-                    <button class="w-4 h-4 rounded-md" style="background-color: #ff0033;" on:click={() => {  //red
-                        $TracksArray = $TracksArray.map(t => t.id === trackId ? {...t, color: '#ff0033' } : t); colorMenuOpen = false; }}></button>
-                    <button class="w-4 h-4 rounded-md" style="background-color: #ff4400;" on:click={() => { //orange
-                         $TracksArray = $TracksArray.map(t => t.id === trackId ? {...t, color: '#ff4400' } : t); colorMenuOpen = false; }}></button>
-                    <button class="w-4 h-4 rounded-md" style="background-color: #ffea00;" on:click={() => { //yellow
-                        $TracksArray = $TracksArray.map(t => t.id === trackId ? {...t, color: '#ffea00' } : t); colorMenuOpen = false; }}></button>
-                    <button class="w-4 h-4 rounded-md" style="background-color: #00bf00;" on:click={() => { //green
-                        $TracksArray = $TracksArray.map(t => t.id === trackId ? {...t, color: '#00bf00' } : t); colorMenuOpen = false; }}></button>
-                        <button class="w-4 h-4 rounded-md" style="background-color: #004491;" on:click={() => { //blue
-                        $TracksArray = $TracksArray.map(t => t.id === trackId ? {...t, color: '#004491' } : t); colorMenuOpen = false; }}></button>
-                        <button class="w-4 h-4 rounded-md" style="background-color: #a800fc;" on:click={() => { //purple
-                        $TracksArray = $TracksArray.map(t => t.id === trackId ? {...t, color: '#a800fc' } : t); colorMenuOpen = false; }}></button>
-                        <button class="w-4 h-4 rounded-md" style="background-color: #ff42dc;" on:click={() => { //pink
-                        $TracksArray = $TracksArray.map(t => t.id === trackId ? {...t, color: '#ff42dc' } : t); colorMenuOpen = false; }}></button>
-                    <button class="mt-4 px-4 py-1 bg-neutral-600 rounded" on:click={() => (colorMenuOpen = false)}>Close</button>
+
+                    <!-- displays every colour as a colour change button -->
+                    {#each colors as color}
+                        <button
+                            class="w-4 h-4 m-2 rounded-md"
+                            style="background-color: {color};"
+                            on:click={() => setTrackColor(color)}
+                        />
+                    {/each}
                 </div>
             </div>  
         </div>
