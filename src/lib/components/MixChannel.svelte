@@ -5,6 +5,8 @@
 
 <script lang="ts">
     import { TracksArray, toggleMute, toggleSolo, changeVolume } from "$lib/stores";
+  import MuteButton from "./common/MuteButton.svelte";
+  import SoloButton from "./common/SoloButton.svelte";
     export let trackId 
 
     $: track = $TracksArray.find(t => t.id === trackId);
@@ -50,39 +52,8 @@
 
 
     <div class="flex items-center gap-4">
-        <!-- Mute Button -->
-        <button class="
-        h-5 
-        w-5 
-        flex
-        items-center
-        justify-center
-        font-bold
-        text-black
-        border-1
-        rounded-[3px]
-        bg-[radial-gradient(circle,_#0767B5,_#032D4F)] 
-        cursor-pointer
-        hover:brightness-150"
-        onclick={() => toggleMute(trackId)}
-        >M</button>
-
-        <!-- Solo Button -->
-        <button class="
-        h-5 
-        w-5
-        flex
-        items-center
-        justify-center
-        font-bold
-        text-black
-        border-1
-        rounded-[3px]
-        bg-[radial-gradient(circle,_#B89D14,_#524609)] 
-        cursor-pointer
-        hover:brightness-150"
-        onclick={() => toggleSolo(trackId)}
-        >S</button>
+        <MuteButton onClick={() => toggleMute(trackId)}/>
+        <SoloButton onClick={() => toggleSolo(trackId)} />
     </div>
 </div>
 

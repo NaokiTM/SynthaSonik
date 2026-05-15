@@ -16,6 +16,7 @@ export const TracksArray = writable([
     pan: 50, //balanced between left and right. more left tends to 0, right tends to 100. 
     panAngle: 0,
     muted: false,
+    soloed: false,
     regions: [  //start with no regions initially
       // { 
       //   barNo: 0,   //which bar the region is in
@@ -79,17 +80,56 @@ export const midiEditorHidden = writable(true)
 
 //Toggle mute on a specific track
 export function toggleMute(id) {
-  TracksArray.update(tracks =>
-    tracks.map(t => t.id === id ? { ...t, muted: !t.muted } : t)
-  );
-  console.log("muted")
+  TracksArray.update(tracks => {
+    const soloActive = tracks.some(t => t.soloed);
+
+    return tracks.map(t => {
+      if (t.id === id) {
+        return {
+          ...t,
+          muted: !t.muted,
+          soloed: soloActive ? false : t.soloed
+        };
+      }
+
+      // if solo was active and user interacts, cancel solo system-wide
+      if (soloActive) {
+        return {
+          ...t,
+          soloed: false,
+          muted: false
+        };
+      }
+
+      return t;
+    });
+  });
 }
 
-// Toggle mute on a specific track
+// toggle solo function (mute every track excluding this track)
 export function toggleSolo(id) {
-  TracksArray.update(tracks =>
-    tracks.map(t => t.id === id ? { ...t, muted: !t.muted } : t)
-  );
+  TracksArray.update(tracks => {
+    const clicked = tracks.find(t => t.id === id);
+    const isAlreadySoloed = clicked?.soloed;
+
+    return tracks.map(t => {
+      if (isAlreadySoloed) {
+        // turn SOLO OFF → restore normal mute state
+        return {
+          ...t,
+          soloed: false,
+          muted: false
+        };
+      }
+
+      // turn SOLO ON
+      return {
+        ...t,
+        soloed: t.id === id,
+        muted: t.id !== id
+      };
+    });
+  });
 }
 
 // change the volume of a track 

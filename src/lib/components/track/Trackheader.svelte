@@ -9,15 +9,12 @@
     export let track  //Track is the variable containing the current track object (things unique to this track)
     import muted from '$lib/assets/muted.png'
     import unmuted from '$lib/assets/unmuted.png'
-    import { toggleMute } from '$lib/stores';
+    import { toggleMute, toggleSolo } from '$lib/stores';
     import Dial from '../common/Dial.svelte';
     import ColorMenu from '../submenus/ColorMenu.svelte';
     import VolumeSlider from '../common/VolumeSlider.svelte';
-
-    function handleMute() {
-        // @ts-ignore
-        toggleMute(track.id)  //The actual toggleMute function is in stores.js
-    }
+  import MuteButton from '../common/MuteButton.svelte';
+  import SoloButton from '../common/SoloButton.svelte';
 
 </script>
 
@@ -37,11 +34,8 @@
         <!-- CONTAINER FOR MUTE AND VOLUME CONTROLS -->
         <div class="flex flex-row mt-1 space-x-1">
 
-            <!-- MUTE BUTTON -->
-            <button on:click={handleMute} class="hover:cursor-pointer w-5 h-5">
-                <!-- Changes muted icon image depending on whether muted or not -->
-                <img src={track.muted ? muted : unmuted} alt="mute">   
-            </button>
+            <MuteButton trackId={track.id} onClick={() => toggleMute(track.id)} />
+            <SoloButton trackId={track.id} onClick={() => toggleSolo(track.id)} />
 
             <!-- VOLUME SLIDER -->
             <VolumeSlider trackId={track.id} /> 
