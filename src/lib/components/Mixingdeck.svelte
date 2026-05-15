@@ -63,7 +63,7 @@
         </div>
 
         <div style="background-color: {track?.color}" class="flex justify-center">
-          {track?.instrument}
+          {track?.trackName}
         </div>
       </div>
     {/each}

@@ -110,20 +110,27 @@
     <img src={track.instrumentIcon} alt='instrumentIcon' class="pb-2 pt-1 pl-1">
     <div class="flex flex-col pt-1">
 
+        <!-- TRACK COLOR MENU --> 
         <!-- TRACK COLOR MENU -->
-        {#if editing}
-            <input
-                bind:value={newName}
-                autofocus
-                on:blur={() => renameTrack(newName)}
-                on:keydown={(e) => e.key === 'Enter' && renameTrack(newName)}
-                class="bg-neutral-700 text-white px-1"
-            />
-        {:else}
-            <div on:dblclick={() => editing = true}>
-                {track.trackName}
-            </div>
-        {/if}
+        <div class="flex items-center">
+            <ColorMenu trackId={track.id}/>
+            <!-- NAME EDITING-->
+            {#if editing}
+                <input 
+                    bind:value={newName}
+                    autofocus
+                    on:blur={() => renameTrack(newName)}
+                    on:keydown={(e) => e.key === 'Enter' && renameTrack(newName)}
+                    class="bg-neutral-700 text-white px-1"
+                />
+            {:else} 
+                <div on:dblclick={() => editing = true}>
+                    {track.trackName}
+                </div>
+            {/if}
+        </div>
+
+
 
         <!-- CONTAINER FOR MUTE AND VOLUME CONTROLS -->
         <div class="flex flex-row mt-1 space-x-1">

@@ -1,4 +1,4 @@
-<!-- ************************************* -->
+<!--************************************* -->
 <!-- BAR NUMBER INDICATORS-->
 <!-- a bar component on the top of the main interface and midi editor, showing bar numbers.-->
 <!-- caret HEADER logic is mostly here -->
