@@ -16,22 +16,24 @@
 
 
   //calculate max number of channels that can fit in the width of the mixing deck
-  function calculateMaxChannels() {
+  function calculateMaxChannels(width: number, tracks: number) {
     const totalWidthPerChannel = channelWidth + gap;
-    const maxThatFit = Math.floor(windowWidth / totalWidthPerChannel);
-    visibleChannelCount = Math.min($noOfTracks, maxThatFit);
+    const maxThatFit = Math.floor(width / totalWidthPerChannel);
+
+    visibleChannelCount = Math.min(tracks, maxThatFit);
   }
+  
+  $: calculateMaxChannels(windowWidth, $noOfTracks);
+
+
 
   onMount(() => {
     // calculate max channels that fit on load initially
     windowWidth = window.innerWidth;
-    calculateMaxChannels();
-
 
     //on window resize, adapt max number of channels that fit
     window.addEventListener('resize', () => {
       windowWidth = window.innerWidth;
-      calculateMaxChannels();
     });
   });
 </script>
@@ -40,7 +42,7 @@
 <div class="bottom-0 w-full h-[30vh] bg-[#5C5B5B] flex justify-start pl-8 items-center gap-5 border-t-1 border-neutral-400 z-30">
   
   <!--all channels displayed in container-->
-  {#each { length: visibleChannelCount} as _, i (i)}
+  {#each { length: visibleChannelCount + 1} as _, i (i)}
     <div class="space-y-2">
       <div class="pl-1.5">
         <div class="flex items-end text-neutral-300 text-xs">
