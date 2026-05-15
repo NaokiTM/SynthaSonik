@@ -8,7 +8,7 @@
 <script lang="ts">
     import minus from '$lib/assets/minus.png'
     import plus from '$lib/assets/plus.png'
-    import { currentBar, noOfBars, caretHeaderWidth, loopedBars, isLoopMode } from '$lib/stores';
+    import { noOfBars, caretHeaderWidth, loopedBars, isLoopMode } from '$lib/stores';
     import { caretPos } from '$lib/stores';
     import { onMount } from 'svelte';
 
@@ -68,49 +68,47 @@
 
     //sets desired bars to be designated as looping
     function addLoopBar(_barNo: number) {
-
-        // if we are in loop mode then allow for adding looping bars (bars can be selected to be looped through)
         if ($isLoopMode) {
             loopedBars.update(current => {
-                
-
                 // Sort the loopedBars array to make sure it's always in order
                 const sortedBars = [...current].sort((a, b) => a - b);
-
-
-                // Only set the bar as looping if it's not already being looped
+                
+                // If bar is NOT currently looped - try to add it
                 if (!current.includes(_barNo)) {
-
-
-                    //if only one bar is looping, dont check for adjacency
+                    // If only one bar is looping, don't check for adjacency
                     if (current.length === 0) {
                         return [...current, _barNo];
                     }
-
-
-                    // Otherwise, check if the bar is adjacent to any of the existing bars
+                    
+                    // Check if the bar is adjacent to any existing bars
                     const isAdjacent = sortedBars.some(bar => bar === _barNo - 1 || bar === _barNo + 1);
-
-
-
+                    
                     if (isAdjacent) {
-                        // Add the bar if it's adjacent
                         return [...current, _barNo]; 
                     } else {
-                        // Do not add the bar if it's not adjacent
                         return current; 
                     }
-
-
-
-                } else {
-                    // Remove the bar if it's already in the array (turn off looping for the selected bar)
-                    return current.filter(bar => bar !== _barNo); 
+                } 
+                // If bar IS currently looped - try to remove it
+                else {
+                    // Only allow removal from the ends to maintain contiguity
+                    const isFirstBar = _barNo === sortedBars[0];
+                    const isLastBar = _barNo === sortedBars[sortedBars.length - 1];
+                    
+                    if (isFirstBar || isLastBar) {
+                        // Remove the bar - it's at an end
+                        return current.filter(bar => bar !== _barNo); 
+                    } else {
+                        // Don't remove - it's in the middle and would split the loop
+                        return current;
+                    }
                 }
             });
-
-
         }
+    }
+
+    function removeLoopBar() {
+
     }
 </script>
 
