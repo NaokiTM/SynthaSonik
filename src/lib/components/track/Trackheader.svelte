@@ -54,8 +54,9 @@
 
     // called when renaming the track 
     function renameTrack(newName: string) {
-        const cleaned = newName.trim();
 
+        //defensive check against empty input
+        const cleaned = newName.trim();
         if (cleaned.length === 0) {
             // optionally reset to old name instead of saving empty
             newName = track.trackName;
@@ -63,7 +64,7 @@
             return;
         }
 
-
+        //update with the tracks new name
         TracksArray.update(tracks =>
             tracks.map(t =>
                 t.id === track.id
