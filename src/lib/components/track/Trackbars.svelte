@@ -106,10 +106,6 @@
             });
         }
     }
-
-    function removeLoopBar() {
-
-    }
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -117,7 +113,6 @@
     class="h-5 w-full bg-neutral-700 flex relative flex-shrink-0"
     bind:this = {caretHeader}
 >
-
     <!-- caret (top bit) -->
     <div 
         class="absolute -left-2.5 clipped-square h-5 w-5 bg-white hover:cursor-pointer" 
@@ -144,8 +139,6 @@
             <img src={minus} alt='remove' class="h-full">
         </button>
     </div>
-
-
 </div>
 
 <style>
