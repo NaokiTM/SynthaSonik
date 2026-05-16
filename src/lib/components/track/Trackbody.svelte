@@ -22,13 +22,13 @@
     let showMenu = false;
 
     // which bar and which track the user opened the menu in
-    let clickedTrackIndex = null;
+    let clickedTrackId = null;
     let clickedBarIndex = null;
 
 
 
     //OPEN RIGHT CLICK MENU FOR THE SELECTED TRACK AND BAR EXACTLY WHERE THE CLICK HAPPENED
-    function handleRightClick(e, trackIndex, barIndex) {
+    function handleRightClick(e, barIndex) {
       
         //get the tracksArea as its dimensions
         const tracksAreaRect = tracksArea.getBoundingClientRect()
@@ -44,7 +44,7 @@
         menuY = e.pageY - tracksAreaRect.top;
 
         // Store which track + bar this action applies to
-        clickedTrackIndex = trackIndex;
+        clickedTrackId = track.id;
         clickedBarIndex = barIndex;
     }
 
@@ -61,15 +61,14 @@
 
     //ADD A NEW AUDIO REGION
     function addRegion() {
-      const regionHere = track.regions.find(region => region.barNo === clickedBarIndex);
+      const id = track.id;  // 👈 HERE
 
-      if (regionHere) {
-        return;  //cancel if region already exists
-      }
+      const regionHere = track.regions.find(region => region.barNo === clickedBarIndex);
+      if (regionHere) return;
 
       TracksArray.update(tracks => {
         return tracks.map(t => {
-          if (t.id !== track.id) return t;
+          if (t.id !== id) return t;
 
           const exists = t.regions.some(r => r.barNo === clickedBarIndex);
           if (exists) return t;
@@ -89,7 +88,6 @@
       });
     }
 
-
     //DELETE AN EXISTING AUDIO REGION
     function deleteRegion() {
       TracksArray.update(tracks => {
@@ -108,7 +106,7 @@
     //OPEN MIDI EDITOR FOR THE SELECTED TRACK 
     function toggleMidiEditor() {
         midiEditorHidden.update(value => !value)
-        whichMidiTrackOpen.set(clickedTrackIndex)
+        whichMidiTrackOpen.set(clickedTrackId);
     }
 </script>
 
@@ -123,7 +121,7 @@
 
         <!-- THE DIV CONTAINING A BAR CELL -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div class="border-neutral-800 border-1 w-1/4 h-15 p-0 flex-shrink-0" on:contextmenu={(e) => handleRightClick(e, track.id, barIndex)}>
+        <div class="border-neutral-800 border-1 w-1/4 h-15 p-0 flex-shrink-0" on:contextmenu={(e) => handleRightClick(e, barIndex)}>
           
             <!-- DISPLAY REGION IF THE BAR CONTAINS A REGION-->
             {#each track.regions.filter(region => region.barNo === barIndex) as region} 

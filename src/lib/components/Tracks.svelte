@@ -71,8 +71,8 @@
     <div class="h-full absolute top-0 bottom-0 w-[1px] bg-white" style="left: {$caretPos}px; height: {caretHeight}px;"></div>
 
     <!-- pass track id prop to each track body to identify it uniquely -->
-    {#each $TracksArray as track, i (track.id)}
-      <Trackbody {track} trackIndex={i} />
+    {#each $TracksArray as track (track.id)}
+      <Trackbody {track} />
     {/each}
   </div>
 </div>

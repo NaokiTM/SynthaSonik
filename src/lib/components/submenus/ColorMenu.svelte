@@ -2,6 +2,11 @@
     import { onDestroy } from 'svelte';
     export let trackId;
     import { TracksArray } from '$lib/stores';
+    import { derived } from 'svelte/store';
+
+    const track = derived(TracksArray, $tracks =>
+        $tracks.find(t => t.id === trackId)
+    );
 
     let colorMenuOpen = false;
 
@@ -15,13 +20,15 @@
         '#ff42dc'  // pink
     ];
 
+
+
     function toggleColorMenu() {
         colorMenuOpen = !colorMenuOpen;
     }
 
     // small action that moves the node to document.body to avoid clipping by
     // parent stacking contexts / overflow. This preserves Svelte bindings/events.
-    function portal(node) {
+    function portal(node: any) {
         const target = document.body;
         target.appendChild(node);
         return {
@@ -49,7 +56,11 @@
 
 
 <div class="pr-2 align-center flex">
-    <button class="w-4 h-4 bg-gray-700 rounded-md" style="background-color: {$TracksArray[trackId].color}" on:click={toggleColorMenu}></button>
+    <button
+        class="w-4 h-4 bg-gray-700 rounded-md"
+        style="background-color: {$track?.color}"
+        on:click={toggleColorMenu}>
+    </button>
     {#if colorMenuOpen}
         <div use:portal data-color-menu-portal class="fixed inset-0 bg-black/50 z-[99999] flex items-center justify-center" on:click={() => (colorMenuOpen = false)}>
             <!-- modal -->
