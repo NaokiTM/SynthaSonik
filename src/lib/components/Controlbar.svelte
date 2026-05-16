@@ -29,10 +29,77 @@
     const tracks = $TracksArray;
     const speed = 100 //speed of caret in pixels per second (change to be based on tempo + pixels per beat)
 
+
+
+
+
+    function cleanupRecording() {
+        // =========================
+        // STOP MEDIA RECORDER
+        // =========================
+        if (mediaRecorder) {
+
+            if (mediaRecorder.state !== "inactive") {
+                mediaRecorder.stop();
+            }
+
+            mediaRecorder.ondataavailable = null;
+            mediaRecorder.onstop = null;
+
+            mediaRecorder = null;
+        }
+
+        // =========================
+        // STOP MICROPHONE STREAM
+        // =========================
+        if (micStream) {
+
+            micStream.getTracks().forEach(track => {
+                track.stop();
+            });
+
+            micStream = null;
+        }
+
+        // =========================
+        // REMOVE MIDI LISTENERS
+        // =========================
+        if (activeMidiInput) {
+            activeMidiInput.onmidimessage = null;
+            activeMidiInput = null;
+        }
+
+        midiAccess = null;
+
+        // =========================
+        // RESET STORE STATE
+        // =========================
+        TracksArray.update(tracks =>
+            tracks.map(t => ({
+                ...t,
+                recording: false
+            }))
+        );
+
+        console.log("Recording cleanup complete");
+    }
+
+
+
+
+
     onMount(() => {
         //initialize audio engine on mount so that there is no delay when user clicks play for the first time
         audio = new AudioEngine;
     });
+
+    onDestroy(() => {
+        cleanupRecording();
+    });
+
+
+
+
 
     //make tempo display stay within 3 digits
     function enforceThreeDigits(event) {
@@ -103,6 +170,8 @@
         isLoopMode.set(!$isLoopMode)
     }
 
+
+
     //Comment in detail later
     function nextCaretPos(timestamp) {        
         animationFrame = requestAnimationFrame(nextCaretPos);
@@ -111,8 +180,15 @@
         caretPos.update(pos => pos + speed * toSeconds); //I dont really get what this does in detail
     }
 
+
+
+
+
+
+
+
     // function to start recording voice (will be different based on the instrument)
-    function startRecording() {
+    async function startRecording() {
 
         // find selected track
         const selectedTrack = $TracksArray.find(t => t.selected);
@@ -125,9 +201,60 @@
 
         // access selected track
         if (selectedTrack.instrument === "voice") {
-            console.log("start microphone recording");
+
+            // CHECK IF CONNECTION TO MIC CAN BE ESTABLISHED
+            try {
+                // ask for microphone access
+                micStream = await navigator.mediaDevices.getUserMedia({
+                    audio: true
+                });
+
+                // create recorder
+                mediaRecorder = new MediaRecorder(micStream);
+                mediaRecorder.start();
+                console.log("Microphone recording started");
+
+            // IF MIC CAN'T BE ACCESSED / NO MIC AVAILABLE
+            } catch (err) {
+                // user denied mic OR no mic exists
+                console.log("No microphone available");
+                return;
+            }
         } else {
-            console.log("start MIDI recording");
+            //CHECK IF BROWSER SUPPORTS MIDI
+            if (!navigator.requestMIDIAccess) {
+                console.log("Web MIDI not supported");
+                return;
+            }
+
+            //TRY CONNECTING TO MIDI IF IT EXISTS
+            try {
+                midiAccess = await navigator.requestMIDIAccess();
+
+                // get connected MIDI inputs
+                const inputs = [...midiAccess.inputs.values()];
+
+                // no MIDI device connected
+                if (inputs.length === 0) {
+                    console.log("No MIDI device connected");
+                    return;
+                }
+
+                // use first MIDI device
+                const midiInput = inputs[0];
+
+                console.log("Connected MIDI:", midiInput.name);
+
+                // listen for MIDI notes
+                midiInput.onmidimessage = (event) => {
+                    console.log("MIDI message:", event.data);
+                };
+
+            // IF BROWSER DOESNT SUPPORT MIDI, DON'T START RECORDING
+            } catch (err) {
+                console.log("Could not access MIDI");
+                return;
+            }
         }
 
         // set recording state
@@ -139,8 +266,18 @@
         );
     }
 
+
+
+
+
+
+
+
     // set the track.recording to false (will stop recording in backend later)
     function stopRecording() {
+
+        cleanupRecording()
+
         TracksArray.update(tracks =>
             tracks.map(t => ({
                 ...t,
@@ -149,10 +286,14 @@
         );
     }
 
-    
-
 
 </script>
+
+
+
+
+
+
 
 <nav class="bg-[#292828] text-white space-x-2 flex items-center text-sm p-2">
 
