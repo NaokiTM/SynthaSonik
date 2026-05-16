@@ -6,46 +6,63 @@ import drum from '$lib/assets/drum.png'
 import mic from '$lib/assets/mic.png'
 import guitar from '$lib/assets/guitar.png'
 
+let nextId = 0;
 
+// optional inputs
+export type CreateTrackInput = {
+    instrument: string;
+    instrumentIcon: string;
+    trackName?: string;
+    sample?: string | null;
+    color?: string;
+};
 
-//Need help differentiating if this sets the default header stuff when I create a new track, or if its the function in trackoptions.
-export const TracksArray = writable([
-  {
-    id: 0,
-    trackName: "keys1",
-    instrument: "keys",
-    instrumentIcon: keys,
-    sample: null,
-    color: "#ff4400", //default color for track
-    volume: 50,  //50% volume initially
-    pan: 50, //balanced between left and right. more left tends to 0, right tends to 100. 
-    panAngle: 0,
-    muted: false,
-    soloed: false,
-    regions: [  //start with no regions initially
-      // { 
-      //   barNo: 0,   //which bar the region is in
-      //   length: 0,  //Length of the region
-      //   notes: [
-      //     {
-      //       //AT THE MOMENT, EACH NOTE FITS EXACTLY ONE BAR. ADD WHEN NOTE LENGTHS CHANGE noteId: 1,   //the id of the note is how many across it is generally. it will be played in sequence of the id
-      //       pos: 1,    //pos is the number of keys down the note is (which note is being played out of the 8 octaves),length is the amount of space it takes  up in a bar
-      //       //POS CAN GO UP TO 12 X 8 = 72.  
-      //       // length: 1
-      //     }
-      //   ],
-      // },
-    ],
-  },
-]);
+// new structure with empty tracks array to begin with, being able to add with the createTrack function
 
+export function createTrack(config: CreateTrackInput): Track {
+    const id = nextId++;
+
+    return {
+        id,
+        trackName: config.trackName ?? `${config.instrument}${id + 1}`,
+        instrument: config.instrument,
+        instrumentIcon: config.instrumentIcon,
+        sample: config.sample ?? null,
+        color: config.color ?? "#ff4400",
+        volume: 50,
+        pan: 50,
+        panAngle: 0,
+        muted: false,
+        soloed: false,
+        regions: []
+    };
+}
+
+export type Track = {
+    id: number;
+    trackName: string;
+    instrument: string;
+    instrumentIcon: string;
+    sample: any;
+    color: string;
+    volume: number;
+    pan: number;
+    panAngle: number;
+    muted: boolean;
+    soloed: boolean;
+    regions: any[];
+};
+
+export const TracksArray = writable<Track[]>([]);
 
 // Derive instrument counts from TracksArray automatically
-export const instrumentCounts = derived(TracksArray, $tracks => {
-    const counts = {};
+export const instrumentCounts = derived(TracksArray, ($tracks) => {
+    const counts: Record<string, number> = {};
+
     $tracks.forEach(track => {
         counts[track.instrument] = (counts[track.instrument] || 0) + 1;
     });
+
     return counts;
 });
 
@@ -93,7 +110,7 @@ export const mixingDeckHidden = writable(true)
 export const midiEditorHidden = writable(true)
 
 //Toggle mute on a specific track
-export function toggleMute(id) {
+export function toggleMute(id: number) {
   TracksArray.update(tracks => {
     const soloActive = tracks.some(t => t.soloed);
 
@@ -121,7 +138,7 @@ export function toggleMute(id) {
 }
 
 // toggle solo function (mute every track excluding this track)
-export function toggleSolo(id) {
+export function toggleSolo(id: number) {
   TracksArray.update(tracks => {
     const clicked = tracks.find(t => t.id === id);
     const isAlreadySoloed = clicked?.soloed;
@@ -152,14 +169,14 @@ export function toggleMixingDeck() {
 }
 
 // change the volume of a track 
-export function changeVolume(id, newVolume) {
+export function changeVolume(id: number, newVolume: number) {
   TracksArray.update(tracks =>
     tracks.map(t => t.id === id ? { ...t, volume: newVolume } : t)
   );
 }
 
 // change the pan level of a track
-export function changePanLevel(id, newPan) {
+export function changePanLevel(id: number, newPan: number) {
   TracksArray.update(tracks =>
     tracks.map(t => t.id === id ? { ...t, pan: newPan } : t)
   );
@@ -167,7 +184,7 @@ export function changePanLevel(id, newPan) {
 
 
 //Change instrument
-export function setInstrument(id, instrument) {
+export function setInstrument(id: number, instrument: string) {
   TracksArray.update(tracks =>
     tracks.map(t => t.id === id ? { ...t, instrument } : t)
   );

@@ -34,7 +34,7 @@ const instrumentIcons = {
     voice: mic,
 }
 
-function portal(node) {
+function portal(node: any) {
     const target = document.body;
     target.appendChild(node);
     return {

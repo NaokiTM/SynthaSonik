@@ -33,17 +33,11 @@
     let clickedTrackIndex: any = null;
 
     function deleteTrack() {
-        if (track.id === 0) {
-            console.log("can't delete first track (to be fixed...)");
-            return;
-        }
 
         // NO instrumentCounts.update() - just update TracksArray and it auto-updates!
         
         TracksArray.update(tracks =>
-            tracks
-                .filter(t => t.id !== track.id)
-                .map(t => t.id > track.id ? { ...t, id: t.id - 1 } : t)
+            tracks.filter(t => t.id !== track.id)
         );
     }
 

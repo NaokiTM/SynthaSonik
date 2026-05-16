@@ -1,6 +1,5 @@
 <script>
   import Controlbar from "$lib/components/Controlbar.svelte";
-  import Menubar from "$lib/components/Menubar.svelte";
   import MidiEditor from "$lib/components/MidiEditor.svelte";
   import Mixingdeck from "$lib/components/Mixingdeck.svelte";
   import Tracks from "$lib/components/Tracks.svelte";

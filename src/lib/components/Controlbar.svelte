@@ -17,9 +17,7 @@
     import loop from '$lib/assets/loop.png'
     import snip from '$lib/assets/snip.png'
     import mixer from '$lib/assets/mixer.png'
-    import { currentBar, currentBeat, keySig, timeSig, tonality, accidental, octave, tempo, isPlaying, TracksArray, isLoopMode, toggleMixingDeck } from '$lib/stores'
-    import { caretPos } from '$lib/stores'
-    import { mixingDeckHidden } from "$lib/stores";
+    import { currentBar, currentBeat, keySig, timeSig, tonality, accidental, octave, tempo, isPlaying, TracksArray, isLoopMode, toggleMixingDeck, caretPos, mixingDeckHidden } from '$lib/stores'
     import { AudioEngine } from '../../audioEngine'
     import { onMount } from 'svelte'
     import Menubar from './Menubar.svelte';
