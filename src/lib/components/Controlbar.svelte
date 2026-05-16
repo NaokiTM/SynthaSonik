@@ -111,6 +111,39 @@
         caretPos.update(pos => pos + speed * toSeconds); //I dont really get what this does in detail
     }
 
+    // function to start recording voice (will be different based on the instrument)
+    function startRecording() {
+        console.log("recording started");
+
+        // find selected track
+        const selectedTrack = $TracksArray.find(t => t.selected);
+
+        // access selected track
+        if (selectedTrack.instrument === "voice") {
+            console.log("start microphone recording");
+        } else {
+            console.log("start MIDI recording");
+        }
+
+        // set recording state
+        TracksArray.update(tracks =>
+            tracks.map(t => ({
+                ...t,
+                recording: t.id === selectedTrack.id
+            }))
+        );
+    }
+
+    // set the track.recording to false (will stop recording in backend later)
+    function stopRecording() {
+        TracksArray.update(tracks =>
+            tracks.map(t => ({
+                ...t,
+                recording: false
+            }))
+        );
+    }
+
     
 
 
@@ -125,7 +158,7 @@
      <div class="flex-1 flex justify-center">
         <div class="bg-neutral-900 p-2 space-x-2 flex w-fit rounded-lg" >
             <!-- svelte-ignore a11y_consider_explicit_label -->
-            <button class="record-btn">
+            <button class="record-btn" on:click={startRecording}>
                 <span class="record-slot"></span>
             </button>
             <button class="cassette-btn" on:click={playTracks}>

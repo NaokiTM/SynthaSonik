@@ -34,6 +34,8 @@ export function createTrack(config: CreateTrackInput): Track {
         panAngle: 0,
         muted: false,
         soloed: false,
+        selected: false,
+        recording: false,
         regions: []
     };
 }
@@ -50,6 +52,8 @@ export type Track = {
     panAngle: number;
     muted: boolean;
     soloed: boolean;
+    selected: boolean;
+    recording: boolean
     regions: any[];
 };
 

@@ -65,7 +65,7 @@
         editing = false;
     }
 
-        //OPEN RIGHT CLICK MENU FOR THE SELECTED TRACK AND BAR EXACTLY WHERE THE CLICK HAPPENED
+    //OPEN RIGHT CLICK MENU FOR THE SELECTED TRACK AND BAR EXACTLY WHERE THE CLICK HAPPENED
     function handleRightClick(e: any, trackIndex: any) {
       
         //get the tracksArea as its dimensions
@@ -85,6 +85,18 @@
         clickedTrackIndex = trackIndex;
     }
 
+    // function to select a track (used when pressing record, )
+    function selectTrack() {
+        // only one track selected at a time
+        TracksArray.update(tracks =>
+            tracks.map(t => ({
+                ...t,
+                selected: t.id === track.id
+            }))
+        );
+        console.log("track selected ")
+    }
+
         //listener to close right click menu if anywhere in the track body clicked 
     onMount(() => {
       const closeMenu = () => (showMenu = false);
@@ -95,15 +107,17 @@
 
 </script>
 
-<div class="bg-neutral-600 w-full h-15 border-neutral-500 border-b-1 flex space-x-2 relative " bind:this={tracksArea} on:contextmenu={(e) => handleRightClick(e, clickedTrackIndex)}>
 
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<div class={`w-full h-15 border-neutral-500 border-b-1 flex space-x-2 relative ${track.selected ? 'bg-neutral-400' : 'bg-neutral-600' }`} bind:this={tracksArea} on:contextmenu={(e) => handleRightClick(e, clickedTrackIndex)} on:click={selectTrack}>
 
     <div class="border-r-1 w-5 border-r-neutral-500 items-center justify-center flex">
         {track.id + 1}
     </div>
+
     <img src={track.instrumentIcon} alt='instrumentIcon' class="pb-2 pt-1 pl-1 scale-80">
     <div class="flex flex-col pt-1">
-
 
         <!-- TRACK COLOR MENU -->
         <div class="flex items-center">
