@@ -113,7 +113,12 @@
 
     // function to start recording voice (will be different based on the instrument)
     function startRecording() {
-        console.log("recording started");
+
+        // defensive check
+        if (!selectedTrack) {
+            console.log("No track selected");
+            return;
+        }
 
         // find selected track
         const selectedTrack = $TracksArray.find(t => t.selected);
