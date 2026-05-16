@@ -4,37 +4,10 @@
 <!-- ************************************* -->
 
 <script lang="ts">
-  import { onMount } from 'svelte';
   import Dial from './common/Dial.svelte';
   import MixChannel from './MixChannel.svelte';
-  import { noOfTracks, toggleMixingDeck, TracksArray } from '$lib/stores';
+  import { toggleMixingDeck, TracksArray } from '$lib/stores';
   import plus from '$lib/assets/plus.png'
-
-  let windowWidth = 0;  
-  let visibleChannelCount = 0;
-  const channelWidth = 70; // total width of MixChannel component
-  const gap = 5; // px gap between components
-
-
-  //calculate max number of channels that can fit in the width of the mixing deck
-  function calculateMaxChannels(width: number, tracks: number) {
-    const totalWidthPerChannel = channelWidth + gap;
-    const maxThatFit = Math.floor(width / totalWidthPerChannel);
-    visibleChannelCount = Math.min(tracks, maxThatFit);
-  }
-
-  //visibleChannelCount changes as noOfTracks does. every time either windowwidth (below) or noOfTracks changes, it recalculates.
-  $: calculateMaxChannels(windowWidth, $noOfTracks);
-
-  onMount(() => {
-    // calculate max channels that fit on load initially
-    windowWidth = window.innerWidth;
-
-    //on window resize, adapt max number of channels that fit
-    window.addEventListener('resize', () => {
-      windowWidth = window.innerWidth;
-    });
-  });
 </script>
 
 <!-- mixing deck container-->
@@ -44,26 +17,25 @@
   <div class="flex items-center h-full pl-7 overflow-x-auto overflow-y-hidden">
 
     <!--all channels displayed in container-->
-    {#each { length: visibleChannelCount + 1} as _, trackId (trackId)}
-      {@const track = $TracksArray.find(t => t.id === trackId)}
-
-      <div class="{trackId !== 0 ? 'border-r border-black' : 'border-l-1 border-r-1'} h-full flex-shrink-0">
+{#each $TracksArray as track (track.id)}
+    <div class="{track.id !== 0 ? 'border-r border-black' : 'border-l-1 border-r-1'} h-full flex-shrink-0">
         <div class="space-y-2 p-4">
-          <div class="pl-1.5">
-            <div class="flex items-end text-neutral-300 text-xs">
-              <div>L</div>
-              <Dial trackId = {trackId} />
-              <div>R</div>
+            <div class="pl-1.5">
+                <div class="flex items-end text-neutral-300 text-xs">
+                    <div>L</div>
+                    <Dial trackId={track.id}/>
+                    <div>R</div>
+                </div>
             </div>
-          </div>
-          <MixChannel trackId={trackId}/>
+
+            <MixChannel trackId={track.id}/>
         </div>
 
         <div style="background-color: {track?.color}" class="flex justify-center">
-          {track?.trackName}
+            {track?.trackName}
         </div>
-      </div>
-    {/each}
+    </div>
+{/each}
 
   </div>
 
