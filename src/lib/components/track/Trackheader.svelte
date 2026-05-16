@@ -110,7 +110,7 @@
     <img src={track.instrumentIcon} alt='instrumentIcon' class="pb-2 pt-1 pl-1 scale-80">
     <div class="flex flex-col pt-1">
 
-        <!-- TRACK COLOR MENU --> 
+
         <!-- TRACK COLOR MENU -->
         <div class="flex items-center">
             <ColorMenu trackId={track.id}/>

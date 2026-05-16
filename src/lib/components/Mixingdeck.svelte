@@ -10,9 +10,6 @@
   import { noOfTracks, toggleMixingDeck, TracksArray } from '$lib/stores';
   import plus from '$lib/assets/plus.png'
 
-
-
-
   let windowWidth = 0;  
   let visibleChannelCount = 0;
   const channelWidth = 70; // total width of MixChannel component
