@@ -314,7 +314,11 @@
                 <span class="cassette-slot"></span>
             </button>
 
-            <button class="cassette-btn" on:click={toggleLoopMode}>
+            <button
+                class="cassette-btn"
+                style={`background: ${$isLoopMode ? '#eab308' : 'rgb(60,59,55)'}`}
+                on:click={toggleLoopMode}
+            >
                 <img src={loop} alt='loop' class="block w-4 h-4 mb-1.5">
                 <span class="cassette-slot"></span>
             </button>
