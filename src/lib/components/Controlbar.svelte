@@ -7,31 +7,37 @@
 
 <script>
     // @ts-nocheck
+    import { onDestroy, onMount } from 'svelte'
+
     import back from '$lib/assets/back.png'
     import play from '$lib/assets/play.png'
     import metronome from '$lib/assets/metronome.png'
     import skip from '$lib/assets/skip.png'
-    import pause from'$lib/assets/pause.png'
-    import record from'$lib/assets/record.png'
+    import pause from '$lib/assets/pause.png'
+    import record from '$lib/assets/record.png'
     import piano from '$lib/assets/piano.png'
     import loop from '$lib/assets/loop.png'
     import snip from '$lib/assets/snip.png'
     import mixer from '$lib/assets/mixer.png'
+
     import { currentBar, currentBeat, keySig, timeSig, tonality, accidental, octave, tempo, isPlaying, TracksArray, isLoopMode, toggleMixingDeck, caretPos, mixingDeckHidden } from '$lib/stores'
     import { AudioEngine } from '../../audioEngine'
-    import { onMount } from 'svelte'
-    import Menubar from './Menubar.svelte';
-    import VolumeSlider from './common/VolumeSlider.svelte';
+
+    import Menubar from './Menubar.svelte'
+    import VolumeSlider from './common/VolumeSlider.svelte'
 
     let audio
     let lastTimestamp;
     let animationFrame;
-    const tracks = $TracksArray;
+
     const speed = 100 //speed of caret in pixels per second (change to be based on tempo + pixels per beat)
 
+    // define audio variables (all created during functions, but used globally)
+    let mediaRecorder = null
+    let micStream = null
 
-
-
+    let midiAccess = null
+    let activeMidiInput = null
 
     function cleanupRecording() {
         // =========================
@@ -56,7 +62,7 @@
 
             micStream.getTracks().forEach(track => {
                 track.stop();
-            });
+            })
 
             micStream = null;
         }
@@ -84,22 +90,14 @@
         console.log("Recording cleanup complete");
     }
 
-
-
-
-
     onMount(() => {
         //initialize audio engine on mount so that there is no delay when user clicks play for the first time
-        audio = new AudioEngine;
+        audio = new AudioEngine()
     });
 
     onDestroy(() => {
-        cleanupRecording();
+        cleanupRecording()
     });
-
-
-
-
 
     //make tempo display stay within 3 digits
     function enforceThreeDigits(event) {
@@ -117,22 +115,26 @@
 
     // 
     async function playTracks() {
-        audio = new AudioEngine;
+        audio = new AudioEngine();
+        const tracks = $TracksArray;
 
         //FIX: unknown content type passed error when importing samples
         //for all tracks, check for a sample, and if it exists then load into buffer and add as clip to play
-        for (let i = 0; i < tracks.length; i++) { 
-            let track = audio.addTrack() 
-            const sample = tracks[i].sample; 
+        for (let i = 0; i < tracks.length; i++) {
+            let track = audio.addTrack();
+
+            const sample = tracks[i].sample;
+
             if (sample) {
                 const buffer = await audio.loadBuffer(sample);
-                await audio.addClip(track, buffer)
-            } 
+                await audio.addClip(track, buffer);
+            }
         }
 
         //First resets the boolean to false (in case its already true), and make it true again to run.
         //idk why this works but it allows for clicking the play button multiple times
         isPlaying.set(true);
+
         lastTimestamp = performance.now(); //What is this? 
 
         //starts moving caret
@@ -140,6 +142,8 @@
 
         // function to play the track, then schedule the next playback
         function playLoop() {
+            if (!$isPlaying) return
+
             audio.play();
 
             // schedule the next play after a delay (e.g. 1 second)
@@ -166,33 +170,23 @@
     }
 
     //toggle loop mode
-    function toggleLoopMode() { 
+    function toggleLoopMode() {
         isLoopMode.set(!$isLoopMode)
     }
 
-
-
     //Comment in detail later
-    function nextCaretPos(timestamp) {        
+    function nextCaretPos(timestamp) {
         animationFrame = requestAnimationFrame(nextCaretPos);
         let toSeconds = (timestamp - lastTimestamp) / 1000; //Converts to seconds
         lastTimestamp = timestamp;
         caretPos.update(pos => pos + speed * toSeconds); //I dont really get what this does in detail
     }
 
-
-
-
-
-
-
-
     // function to start recording voice (will be different based on the instrument)
     async function startRecording() {
 
         // find selected track
         const selectedTrack = $TracksArray.find(t => t.selected);
-        
         // defensive check
         if (!selectedTrack) {
             console.log("No track selected");
@@ -211,7 +205,13 @@
 
                 // create recorder
                 mediaRecorder = new MediaRecorder(micStream);
+
+                mediaRecorder.ondataavailable = (event) => {
+                    console.log("Audio chunk:", event.data);
+                }
+
                 mediaRecorder.start();
+
                 console.log("Microphone recording started");
 
             // IF MIC CAN'T BE ACCESSED / NO MIC AVAILABLE
@@ -241,14 +241,14 @@
                 }
 
                 // use first MIDI device
-                const midiInput = inputs[0];
+                activeMidiInput = inputs[0];
 
-                console.log("Connected MIDI:", midiInput.name);
+                console.log("Connected MIDI:", activeMidiInput.name);
 
                 // listen for MIDI notes
-                midiInput.onmidimessage = (event) => {
+                activeMidiInput.onmidimessage = (event) => {
                     console.log("MIDI message:", event.data);
-                };
+                }
 
             // IF BROWSER DOESNT SUPPORT MIDI, DON'T START RECORDING
             } catch (err) {
@@ -266,13 +266,6 @@
         );
     }
 
-
-
-
-
-
-
-
     // set the track.recording to false (will stop recording in backend later)
     function stopRecording() {
 
@@ -286,14 +279,7 @@
         );
     }
 
-
 </script>
-
-
-
-
-
-
 
 <nav class="bg-[#292828] text-white space-x-2 flex items-center text-sm p-2">
 
@@ -307,29 +293,33 @@
             <button class="record-btn" on:click={startRecording}>
                 <span class="record-slot"></span>
             </button>
-            <button class="cassette-btn" on:click={playTracks}>
-                <img src='{play}' alt='back' class="block w-4 h-4 mb-1.5">
-                <span class="cassette-slot"></span>
-            </button>
-            <button class="cassette-btn" on:click={pauseTracks}>
-                <img src='{pause}' alt='play' class="block w-4 h-4 mb-1.5">
-                <span class="cassette-slot"></span>
-            </button>
-            <button class="cassette-btn" on:click={rewindTracks}>
-                <img src='{back}' alt='record' class="block w-4 h-4 mb-1.5">
-                <span class="cassette-slot"></span>
-            </button>
-            <button class="cassette-btn">
-                <img src='{skip}' alt='skip'class="block w-4 h-4 mb-1.5">
-                <span class="cassette-slot"></span>
-            </button>
-            <button class="cassette-btn" on:click={toggleLoopMode}>
-                <img src={loop} alt='metronome' class="block w-4 h-4 mb-1.5">
-                <span class="cassette-slot"></span>
-            </button>
-        </div> 
-     </div>
 
+            <button class="cassette-btn" on:click={playTracks}>
+                <img src={play} alt='play' class="block w-4 h-4 mb-1.5">
+                <span class="cassette-slot"></span>
+            </button>
+
+            <button class="cassette-btn" on:click={pauseTracks}>
+                <img src={pause} alt='pause' class="block w-4 h-4 mb-1.5">
+                <span class="cassette-slot"></span>
+            </button>
+
+            <button class="cassette-btn" on:click={rewindTracks}>
+                <img src={back} alt='back' class="block w-4 h-4 mb-1.5">
+                <span class="cassette-slot"></span>
+            </button>
+
+            <button class="cassette-btn">
+                <img src={skip} alt='skip' class="block w-4 h-4 mb-1.5">
+                <span class="cassette-slot"></span>
+            </button>
+
+            <button class="cassette-btn" on:click={toggleLoopMode}>
+                <img src={loop} alt='loop' class="block w-4 h-4 mb-1.5">
+                <span class="cassette-slot"></span>
+            </button>
+        </div>
+     </div>
 
     <!-- track information (the blue bit in the middle; this is straight gore at the minute) -->
      <div class="justify-center flex">
@@ -338,28 +328,37 @@
                 <div class="text-xl">{$currentBar}</div>
                 <div class="text-xs text-center">bar</div>
             </div>
+
             <div class="border-sky-800 border-1 ml-1 mr-1 w-fit items-center"></div>
+
             <div class="flex flex-col">
                 <div class="text-xl">{$currentBeat}</div>
                 <div class='text-xs text-center'>beat</div>
             </div>
+
             <div class="border-sky-800 border-1 ml-1 mr-1"></div>
+
             <div class="flex flex-col">
                 <div class="text-center">
-                    <input 
-                        type="number" 
-                        min="0" 
-                        max="999" 
+                    <input
+                        type="number"
+                        min="0"
+                        max="999"
                         bind:value={$tempo}
-                        class="custom-input" 
+                        class="custom-input"
                         on:input={enforceThreeDigits}
                     />
                 </div>
+
                 <!-- <div class="text-center text-xs">keep</div> -->
+
                 <div class="text-xs text-center">tempo</div>
             </div>
+
             <div class="border-sky-800 border-1 ml-1 mr-1"></div>
+
             <div class="flex flex-row justify-between">
+
                 <div class="text-xl text-center flex-col justify-center items-center flex">
                     <select class="sig-drop w-full">
                         <option value="4/4">4/4</option>
@@ -369,9 +368,12 @@
                         <option value="7/8">7/8</option>
                         <option value="6/8">6/8</option>
                     </select>
+
                     <div class="text-xs text-center">time</div>
                 </div>
+
                 <div class="border-sky-800 border-1 ml-1 mr-1"></div>
+
                 <div class="text-lg text-center flex flex-col justify-center items-center">
                     <select class="sig-drop w-full">
                         <option value="C# Major">C# Major</option>
@@ -411,43 +413,39 @@
             </div>
         </div>
      </div>
-        <div class="flex-1">
+
+    <div class="flex-1"></div>
+
+    <div class="flex-1 flex justify-center">
+
+        <div class="flex-1 flex flex-col justify-center items-center scale-125 space-y-1">
+            <div class="text-xs">Master Volume</div>
+            <VolumeSlider />
         </div>
 
-        <div class="flex-1 flex justify-center" >
-            <div class="flex-1 flex flex-col justify-center items-center scale-125 space-y-1"> 
-                <div class="text-xs">Master Volume</div>
-                <VolumeSlider></VolumeSlider>
-            </div>
-            <div class="flex bg-neutral-900 w-fit p-2 rounded-lg space-x-2">
-                <button class="cassette-btn">
-                    <img src={snip} alt='metronome' class="block w-4 h-4 mb-1.5">
-                    <span class="cassette-slot"></span>
-                </button>
-                <button class="cassette-btn" on:click={toggleMixingDeck}>
-                    <img src={mixer} alt='metronome' class="block w-4 h-4 mb-1.5">
-                    <span class="cassette-slot"></span>
-                </button>                
-                <button class="cassette-btn">
-                    <img src={metronome} alt='metronome' class="block w-4 h-4 mb-1.5">
-                    <span class="cassette-slot"></span>
-                </button>
+        <div class="flex bg-neutral-900 w-fit p-2 rounded-lg space-x-2">
 
-                <!-- <button class="cassette-btn">
-                    <img src={} alt='metronome' class="block w-4 h-4 mb-1.5">
-                    <span class="cassette-slot"></span>
-                </button> -->
-            </div>
+            <button class="cassette-btn">
+                <img src={snip} alt='snip' class="block w-4 h-4 mb-1.5">
+                <span class="cassette-slot"></span>
+            </button>
+
+            <button class="cassette-btn" on:click={toggleMixingDeck}>
+                <img src={mixer} alt='mixer' class="block w-4 h-4 mb-1.5">
+                <span class="cassette-slot"></span>
+            </button>
+
+            <button class="cassette-btn">
+                <img src={metronome} alt='metronome' class="block w-4 h-4 mb-1.5">
+                <span class="cassette-slot"></span>
+            </button>
+
         </div>
+    </div>
 </nav>
 
 <style>
-    /* img {
-        scale: 50%;
-    } */
-
     .record-btn {
-        /* all: unset; */
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -484,7 +482,6 @@
     }
 
     .cassette-btn {
-        /* all: unset; */
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -521,39 +518,57 @@
     }
 
     .sig-drop {
-        appearance: none;            /* Remove default OS styling */
+        appearance: none;
         -webkit-appearance: none;
         -moz-appearance: none;
-        background-image: none;   /* important */
+
+        background-image: none;
 
         background-color: rgb(0, 74, 112);
-        color: rgb(5, 166, 244);               
-        border: none;                /* Clean edge */
+        color: rgb(5, 166, 244);
+
+        border: none;
+
         padding: 0;
+
         font-size: 14px;
+
         border-radius: 4px;
+
         cursor: pointer;
+
         outline: none;
+
         width: fit-content;
+
         margin-right: 1px;
     }
 
     .custom-input {
         appearance: none;
         -webkit-appearance: none;
-        -moz-appearance: textfield; /* hides spinners in Firefox */
+        -moz-appearance: textfield;
 
-        background-color: rgb(0, 74, 112);  /* same blue as dropdown */
-        color: rgb(5, 166, 244);                /* black text */
-        border: none;       /* same slim padding */
+        background-color: rgb(0, 74, 112);
+
+        color: rgb(5, 166, 244);
+
+        border: none;
+
         font-size: 20px;
 
-        line-height: 1;         /* IMPORTANT */
-        padding: 0;  
+        line-height: 1;
+
+        padding: 0;
+
         border-radius: 4px;
+
         outline: none;
-        width: 3ch;                /* optional: fixed width */
+
+        width: 3ch;
+
         text-align: center;
+
         padding-top: 2px;
     }
 </style>
