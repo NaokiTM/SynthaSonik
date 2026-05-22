@@ -7,5 +7,9 @@ export default defineConfig({
 	server: {
 		port: 8080,      // change to your desired port
 		open: true,      // optional: automatically opens browser
- 	 }
+		watch: {
+			usePolling: true,
+			interval: 100
+		}
+ 	}
 });
