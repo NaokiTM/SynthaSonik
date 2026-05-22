@@ -5,6 +5,8 @@
     $: trackIndex = $whichMidiTrackOpen
     // let clickedNoteIndex = null
 
+    // calculates width based on width of container
+    let barWidth: HTMLDivElement
 
 
 
@@ -73,7 +75,9 @@
 
     //resizing notes
     // const resize
-
+    function resizeNoteWidth() {  
+      
+    }
 
 
   
@@ -91,14 +95,18 @@
           <div class="border-neutral-800 border-1 w-1/4 h-6 flex-shrink-0 relative"> <!-- svelte-ignore a11y_consider_explicit_label --> <!-- svelte-ignore element_invalid_self_closing_tag --> <!-- the button is the note that you click to add or remove a note, and the hasNoteHelper function determines whether it should be green (if there is a note there) or not (if there isnt a note there)--> <!-- the math.max bit subtracts 1 but keeps the value from going below 1 --> <!-- the handleNote function adds or removes a note at that position in the store depending on whether there is already a note there or not-->
             <!-- svelte-ignore a11y_consider_explicit_label -->
             <!-- svelte-ignore element_invalid_self_closing_tag -->
-            <button
-              class="w-full h-full"
-              class:bg-green-500={hasNoteHelper(octaveIndex, barIndex, rowIndex)}
-              class:bg-neutral-900={!hasNoteHelper(octaveIndex, barIndex, rowIndex)}
-              on:click={() =>
-                handleNote(octaveIndex, rowIndex, barIndex)
-              }
-            />
+
+            <!-- div container that can be resized -->
+            <div style={`width: ${barWidth}px;`} on:resize={() => resizeNoteWidth(barWidth)}></div>
+              <button
+                class="w-full h-full"
+                class:bg-green-500={hasNoteHelper(octaveIndex, barIndex, rowIndex)}
+                class:bg-neutral-900={!hasNoteHelper(octaveIndex, barIndex, rowIndex)}
+                on:click={() =>
+                  handleNote(octaveIndex, rowIndex, barIndex)
+                }
+              />
+            </div>
           </div>
         {/each}
       </div>

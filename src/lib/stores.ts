@@ -36,7 +36,14 @@ export function createTrack(config: CreateTrackInput): Track {
         soloed: false,
         selected: false,
         recording: false,
-        regions: []
+        regions: {
+          regionWidth: 0,
+          notes: {
+            noteWidth: 0,
+            
+
+          }
+        }
     };
 }
 
@@ -54,7 +61,7 @@ export type Track = {
     soloed: boolean;
     selected: boolean;
     recording: boolean
-    regions: any[];
+    regions: any {};
 };
 
 export const TracksArray = writable<Track[]>([]);
