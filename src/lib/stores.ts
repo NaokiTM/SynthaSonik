@@ -24,45 +24,88 @@ export function createTrack(config: CreateTrackInput): Track {
 
     return {
         id,
+
         trackName: config.trackName ?? `${config.instrument}${id + 1}`,
         instrument: config.instrument,
         instrumentIcon: config.instrumentIcon,
         sample: config.sample ?? null,
         color: config.color ?? "#ff4400",
+
         volume: 50,
         pan: 50,
         panAngle: 0,
+
         muted: false,
         soloed: false,
         selected: false,
         recording: false,
-        regions: {
-          regionWidth: 0,
-          notes: {
-            noteWidth: 0,
-            
 
-          }
-        }
+        regions: []
     };
 }
 
+
 export type Track = {
-    id: number;
-    trackName: string;
-    instrument: string;
-    instrumentIcon: string;
-    sample: any;
-    color: string;
-    volume: number;
-    pan: number;
-    panAngle: number;
-    muted: boolean;
-    soloed: boolean;
-    selected: boolean;
-    recording: boolean
-    regions: any {};
+  id: number;
+
+  // track identifiers
+  trackName: string;
+  instrument: string;
+  instrumentIcon: string;
+
+  // url to the sample being used? 
+  sample: string | null;
+
+  // 
+  color: string;
+
+  // sound output
+  volume: number;
+  pan: number;
+  panAngle: number;
+
+  // track status booleans
+  muted: boolean;
+  soloed: boolean;
+  selected: boolean;
+  recording: boolean;
+
+  // array containing the audio regions
+  regions: Region[];
 };
+
+
+export type Note = {
+  id: string;
+
+  // semitones that translate over to midi / piano keys. 
+  pitch: number;        
+
+  //how many bars along the notes start point is from the regions start point. 
+  start: number;        
+
+  //width is in bars, e.g. if its size is 0.3 of a bar etc. 
+  width: number;     
+
+  // probably not relevant, because this is influenced by the songs bpm. 
+  velocity?: number;
+};
+
+export type Region = {
+  id: string;
+
+  //absolute distance in bars from the first bar of the track / song. in decimal to represent small movements
+  startBar: number;   
+  endBar: number;
+
+  // region gain
+  volume?: number;     
+  color?: string;
+
+  // array containing notes in a region
+  notes: Note[];
+};
+
 
 export const TracksArray = writable<Track[]>([]);
 
