@@ -32,40 +32,37 @@
     // DURING RESIZE, CALCULATE NEW WIDTH AND UPDATE STORE
     function resize(event: MouseEvent) {
         if (!resizing) return;
-        const differenceX = event.clientX - startX;
-        currentNoteWidth = Math.max(barCellWidth, startWidth + differenceX);
 
-        const newWidthInBars = Math.max(1, currentNoteWidth / barCellWidth);
-        TracksArray.update(tracks => tracks.map(track => ({
-            ...track,
-            regions: track.regions.map(region => ({
-                ...region,
-                notes: region.notes.map(n =>
-                    n.id === note.id ? { ...n, width: newWidthInBars } : n
-                )
+        const differenceX = event.clientX - startX;
+
+        // minimum width only prevents disappearing
+        currentNoteWidth = Math.max(10, startWidth + differenceX);
+
+        const newWidthInBars = currentNoteWidth / barCellWidth;
+
+        TracksArray.update(tracks =>
+            tracks.map(track => ({
+                ...track,
+                regions: track.regions.map(region => ({
+                    ...region,
+                    notes: region.notes.map(n =>
+                        n.id === note.id
+                            ? { ...n, width: newWidthInBars }
+                            : n
+                    )
+                }))
             }))
-        })));
+        );
     }
 
     // ON RESIZE STOP, SNAP TO NEAREST BAR AND UPDATE STORE
     function stopResize() {
         resizing = false;
+
         window.removeEventListener("mousemove", resize);
         window.removeEventListener("mouseup", stopResize);
-
-        const snappedWidth = Math.round(currentNoteWidth / barCellWidth);
-        currentNoteWidth = snappedWidth * barCellWidth;
-        TracksArray.update(tracks => tracks.map(track => ({
-            ...track,
-            regions: track.regions.map(region => ({
-                ...region,
-                notes: region.notes.map(n =>
-                    n.id === note.id ? { ...n, width: snappedWidth } : n
-                )
-            }))
-        })));
     }
-
+    
     // REMOVE NOTE BY DOUBLE CLICKING THE NOTE
     function removeNote() {
         TracksArray.update(tracks => tracks.map(track => ({
