@@ -100,9 +100,13 @@
               />
               
               <!-- IF NOTE EXISTS IN THIS SPACE RENDER IT -->
-              <div class="absolute inset-0 z-10 ">
+              <div class="absolute inset-0 z-10 pointer-events-none">
                   {#each ($TracksArray[trackIndex]?.regions ?? []) as region}
-                      {#each region.notes.filter(note => note.pitch === octaveIndex * 12 + rowIndex && barIndex >= region.startBar + note.start && barIndex < region.startBar + note.start + note.width) as note (note.id)}
+                      {#each region.notes.filter(
+                          note =>
+                              note.pitch === octaveIndex * 12 + rowIndex &&
+                              barIndex === region.startBar + note.start
+                      ) as note (note.id)}
                           <NoteRegion {note} notePixelWidth={barCellWidth * note.width} {barCellWidth}/>
                       {/each}
                   {/each}

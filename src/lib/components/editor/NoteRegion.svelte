@@ -55,7 +55,7 @@
         );
     }
 
-    // ON RESIZE STOP, SNAP TO NEAREST BAR AND UPDATE STORE
+    // ON RESIZE STOP
     function stopResize() {
         resizing = false;
 
