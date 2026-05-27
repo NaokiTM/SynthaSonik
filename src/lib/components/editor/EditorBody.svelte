@@ -90,15 +90,14 @@
         
           <!-- BAR CELL FOR A SINGLE PITCH -->
           <!-- PASS ITS CLIENT WIDTH AS THE DEFAULT WIDTH FOR A NEW NOTE -->
-          <div class="border-neutral-800 border-1 w-1/4 h-6 flex-shrink-0 relative" bind:clientWidth={barCellWidth}> 
+          <div class="border-neutral-800 border-1 w-1/4 h-6 flex-shrink-0 relative" bind:clientWidth={barCellWidth} > 
             <div class="w-full h-full relative">
 
               <!-- BUTTON TO ADD NEW NOTE -->
               <button 
-                aria-label="Add note"
                 class="absolute inset-0 bg-neutral-900 hover:bg-neutral-700 z-0" 
                 on:click={() => addNote(octaveIndex, rowIndex, barIndex)}
-              ></button>
+              />
               
               <!-- IF NOTE EXISTS IN THIS SPACE RENDER IT -->
               <div class="absolute inset-0 z-10 pointer-events-none">
