@@ -16,12 +16,6 @@
         TracksArray.update(tracks => {
             const copy = [...tracks];
             const track = { ...copy[trackIndex] };
-            
-            // Guard: ensure track and regions exist
-            if (!track || !track.regions) {
-                console.warn('No track found at index:', trackIndex);
-                return tracks;
-            }
 
             // Find the region index (not the region itself)
             const regionIndex = track.regions.findIndex(
