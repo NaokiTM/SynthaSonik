@@ -54,7 +54,7 @@
 
                 // IF NOTE ALREADY EXISTS IN THIS SPACE, RENOVE
                 if (existingNoteIndex !== -1) {
-                    newNotes = region.notes.filter((_, i) => i !== existingNoteIndex);
+                    return copy
                 } else { // ELSE ADD NEW NOTE TO REGION
                     newNotes = [...region.notes, {
                         id: crypto.randomUUID(),
@@ -102,7 +102,7 @@
               <!-- IF NOTE EXISTS IN THIS SPACE RENDER IT -->
               <div class="absolute inset-0 z-10 pointer-events-none">
                   {#each ($TracksArray[trackIndex]?.regions ?? []) as region}
-                      {#each region.notes.filter(note => note.pitch === octaveIndex * 12 + rowIndex && barIndex >= region.startBar + note.start && barIndex < region.startBar + note.start + note.width) as note}
+                      {#each region.notes.filter(note => note.pitch === octaveIndex * 12 + rowIndex && barIndex >= region.startBar + note.start && barIndex < region.startBar + note.start + note.width) as note (note.id)}
                           <NoteRegion {note} notePixelWidth={barCellWidth * note.width} {barCellWidth}/>
                       {/each}
                   {/each}

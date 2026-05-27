@@ -82,13 +82,14 @@
 <div 
     class="absolute inset-y-0 left-0 bg-green-500 z-10 flex items-center justify-end pointer-events-auto"
     style="width: {currentNoteWidth}px;"
-    on:dblclick|stopPropagation={() => removeNote()}
+    on:click|stopPropagation={() => {}}
+    on:dblclick|stopPropagation={removeNote}
 >
 
     <!-- NOTE RESIZER ON EDGE OF THE NOTE-->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div 
         class="w-2 h-full bg-green-300 cursor-ew-resize flex-shrink-0 hover:bg-white pointer-events-auto"
-        on:mousedown={startResize}
+        on:mousedown|preventDefault|stopPropagation={startResize}
     />
 </div>
