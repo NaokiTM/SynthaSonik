@@ -1,85 +1,85 @@
 <script lang="ts">
     import { noOfBars, TracksArray, whichMidiTrackOpen,  } from "$lib/stores";
+    import { onDestroy, onMount } from "svelte";
+    import NoteRegion from "./NoteRegion.svelte";
 
     let trackIndex: number;
     $: trackIndex = $whichMidiTrackOpen
     // let clickedNoteIndex = null
 
-    // calculates width based on width of container
-    let barWidth: HTMLDivElement
+    let barCellWidth = 0; 
 
-
-
-    // adds note to the midi editor track, if note already exists then remove it. if note doesnt exist then add it. default length of 1 (fills the bar clicked on)
-    function handleNote(octaveIndex: number, rowIndex: number, barIndex: number) {
-        // if note already exists then remove, if note doesnt exist then add. default length of 1 (fills the bar clicked on)
-
-        const rowsPerOctave = 12
+    function addNote(octaveIndex: number, rowIndex: number, barIndex: number) {
+        const rowsPerOctave = 12;
         const notePos = octaveIndex * rowsPerOctave + rowIndex;
 
         TracksArray.update(tracks => {
             const copy = [...tracks];
             const track = { ...copy[trackIndex] };
-
-            //Find region for current bar (since we are given the bar index)
-            let region = track.regions.find(r => r.barNo === barIndex);
-
-            //If a region doesnt exist then make a new one 
-            if (!region) {
-                region = {barNo: barIndex, length: 1, notes: []};
-                track.regions = [...track.regions, region];
+            
+            // Guard: ensure track and regions exist
+            if (!track || !track.regions) {
+                console.warn('No track found at index:', trackIndex);
+                return tracks;
             }
 
-            const newNote = {
-                pos: notePos,  //Determines the note the new note is going in
-                length: 1
-            };
+            // Find the region index (not the region itself)
+            const regionIndex = track.regions.findIndex(
+                r => barIndex >= r.startBar && barIndex < r.endBar
+            );
 
-            //check if note already exists, if it does then remove and return false
-            let noteToFind = region.notes.find(note => note.pos === notePos)
-            if (noteToFind) {
-                region.notes = region.notes.filter(note => note.pos !== notePos);
-                copy[trackIndex] = track;
-                return copy;
+            if (regionIndex === -1) {
+                // No region exists - create a new one with the note
+                const noteStart = 0; // New region starts at this bar
+                const newRegion = {
+                    id: crypto.randomUUID(),
+                    startBar: barIndex,
+                    endBar: barIndex + 1,
+                    notes: [{
+                        id: crypto.randomUUID(),
+                        pitch: notePos,
+                        start: noteStart,
+                        width: 1
+                    }]
+                };
+                track.regions = [...track.regions, newRegion];
+
+
+            } else {
+                // Region exists - update it immutably
+                const region = track.regions[regionIndex];
+                const noteStart = barIndex - region.startBar;
+                
+                const existingNoteIndex = region.notes.findIndex(
+                    note => note.pitch === notePos && note.start === noteStart
+                );
+
+                let newNotes;
+                if (existingNoteIndex !== -1) {
+                    // Remove existing note
+                    newNotes = region.notes.filter((_, i) => i !== existingNoteIndex);
+                } else {
+                    // Add new note
+                    newNotes = [...region.notes, {
+                        id: crypto.randomUUID(),
+                        pitch: notePos,
+                        start: noteStart,
+                        width: 1
+                    }];
+                }
+
+                // Create new regions array with updated region
+                track.regions = track.regions.map((r, i) => 
+                    i === regionIndex ? { ...r, notes: newNotes } : r
+                );
             }
-
-            //appends the new note to the existing notes in the region
-            region.notes = [...region.notes, newNote]
 
             copy[trackIndex] = track;
             return copy;
         });
-        //add the note in stores to the track, to a new region length 1, to a bar number, to pos. 
-      
+
+        console.log('Updated tracks:', $TracksArray[trackIndex]);
     }
-
-    //helper function for checking if a note exists at a spot     function hasNoteHelper(octaveIndex: number, barIndex: number, rowIndex: number) {
-    function hasNoteHelper(octaveIndex: number, barIndex: number, rowIndex: number) {
-        const rowsPerOctave = 12
-        const notePos = octaveIndex * rowsPerOctave + rowIndex
-
-
-        //Get the bar number in the region (if the region exists which it should after clicking a note, then we let it show the note (region))
-        const track = $TracksArray[trackIndex];
-
-        if (!track) return false;
-
-        const region = track.regions.find(r => r.barNo === barIndex);
-        if (!region) return false;
-
-        //Return true if it finds the matching note 
-        return !!region.notes.find(note => note.pos === notePos)
-    }
-
-
-
-    //resizing notes
-    // const resize
-    function resizeNoteWidth() {  
-      
-    }
-
-
   
 </script>
 
@@ -87,25 +87,28 @@
   <!-- 8 octaves -->
   {#each Array.from({ length: 8 }) as _, octaveIndex}
 
+    <!-- 12 pitches (piano keys) per octave -->
     {#each Array.from({ length: 12 }) as _, rowIndex}
       <div class="bg-neutral-900 h-6 flex">
         {#each Array.from({ length: $noOfBars }) as _, barIndex}
         
 
-          <div class="border-neutral-800 border-1 w-1/4 h-6 flex-shrink-0 relative"> <!-- svelte-ignore a11y_consider_explicit_label --> <!-- svelte-ignore element_invalid_self_closing_tag --> <!-- the button is the note that you click to add or remove a note, and the hasNoteHelper function determines whether it should be green (if there is a note there) or not (if there isnt a note there)--> <!-- the math.max bit subtracts 1 but keeps the value from going below 1 --> <!-- the handleNote function adds or removes a note at that position in the store depending on whether there is already a note there or not-->
-            <!-- svelte-ignore a11y_consider_explicit_label -->
-            <!-- svelte-ignore element_invalid_self_closing_tag -->
-
-            <!-- div container that can be resized -->
-            <div style={`width: ${barWidth}px;`} on:resize={() => resizeNoteWidth(barWidth)}></div>
-              <button
-                class="w-full h-full"
-                class:bg-green-500={hasNoteHelper(octaveIndex, barIndex, rowIndex)}
-                class:bg-neutral-900={!hasNoteHelper(octaveIndex, barIndex, rowIndex)}
-                on:click={() =>
-                  handleNote(octaveIndex, rowIndex, barIndex)
-                }
+          <!-- represents a single bar for a pitch (its a container) -->
+          <div class="border-neutral-800 border-1 w-1/4 h-6 flex-shrink-0 relative" bind:clientWidth={barCellWidth}>
+            <div class="w-full h-full relative">
+              <button 
+                class="absolute inset-0 bg-neutral-900 hover:bg-neutral-700 z-0" 
+                on:click={() => addNote(octaveIndex, rowIndex, barIndex)}
               />
+              
+              <!-- Notes render on top of button -->
+              <div class="absolute inset-0 z-10 pointer-events-none">
+                  {#each ($TracksArray[trackIndex]?.regions ?? []) as region}
+                      {#each region.notes.filter(note => note.pitch === octaveIndex * 12 + rowIndex && barIndex >= region.startBar + note.start && barIndex < region.startBar + note.start + note.width) as note}
+                          <NoteRegion {note} notePixelWidth={barCellWidth * note.width} {barCellWidth}/>
+                      {/each}
+                  {/each}
+              </div>
             </div>
           </div>
         {/each}
