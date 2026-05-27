@@ -105,7 +105,7 @@
                       {#each region.notes.filter(
                           note =>
                               note.pitch === octaveIndex * 12 + rowIndex &&
-                              barIndex === region.startBar + note.start
+                              barIndex === region.startBar
                       ) as note (note.id)}
                           <NoteRegion {note} notePixelWidth={barCellWidth * note.width} {barCellWidth}/>
                       {/each}
