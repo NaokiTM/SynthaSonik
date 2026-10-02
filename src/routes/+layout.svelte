@@ -9,7 +9,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<title>onlinedaw</title>
+	<title>SynthaSonik</title>
 </svelte:head>
 
 {@render children?.()}
