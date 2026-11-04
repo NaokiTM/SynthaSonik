@@ -28,6 +28,20 @@ You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
 
+# Screenshots
+
+## Main interface
+
+![Screenshot](./src/lib/assets/mainint.png)
+
+## Midi interface 
+
+![Screenshot](./src/lib/assets/midi.png)
+
+## About window
+
+![Screenshot](./src/lib/assets/about.png)
+
 # Attributions (add later to footer or about)
 <a target="_blank" href="https://icons8.com/icon/9978/play">Play</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
 <a target="_blank" href="https://icons8.com/icon/60362/filled-circle">Circle</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
